@@ -3,9 +3,8 @@ package com.hu.fypimplbackend.services
 import java.io.InputStream
 import java.util.*
 
-interface FileStore {
+interface IFileStore {
     fun upload(
-
         path: String,
         fileName: String,
         optionalMetadata: Optional<Map<String, String>>,

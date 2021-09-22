@@ -1,4 +1,4 @@
-package com.hu.fypimplbackend.repositories
+package com.hu.fypimplbackend.repositories.address
 
 import com.hu.fypimplbackend.domains.Address
 import org.springframework.data.jpa.repository.JpaRepository

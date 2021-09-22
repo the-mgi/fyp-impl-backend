@@ -2,7 +2,7 @@ package com.hu.fypimplbackend.dto.response
 
 import org.springframework.http.HttpStatus
 
-class ErrorDTO(
+class ErrorResponseDTO(
     var message: String? = null,
     var error: String? = null,
 
@@ -11,5 +11,8 @@ class ErrorDTO(
 ) : BaseResponse(hasError, status) {
     override fun toString(): String {
         return "ErrorDTO(message=$message, error=$error)"
+    }
+
+    companion object {
     }
 }

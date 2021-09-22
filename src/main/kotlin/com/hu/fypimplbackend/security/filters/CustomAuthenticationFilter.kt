@@ -1,9 +1,9 @@
-package com.kdsp.ds.security.filters
+package com.hu.fypimplbackend.security.filters
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.kdsp.ds.dto.UsernameAndPasswordDTO
+import com.hu.fypimplbackend.dto.UsernameAndPasswordDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -35,7 +35,7 @@ class CustomAuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         val usernameAndPassword: UsernameAndPasswordDTO = getUserNameAndPassword(request)
         val username = usernameAndPassword.username
-        val password =  usernameAndPassword.password
+        val password = usernameAndPassword.password
 
         loggerFactory.info("username: $username and password: $password")
         val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(username, password)

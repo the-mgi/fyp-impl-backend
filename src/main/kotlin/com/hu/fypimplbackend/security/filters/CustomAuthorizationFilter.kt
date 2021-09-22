@@ -1,4 +1,4 @@
-package com.kdsp.ds.security.filters
+package com.hu.fypimplbackend.security.filters
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
@@ -42,7 +42,8 @@ class CustomAuthorizationFilter : OncePerRequestFilter() {
                 val authorities: MutableList<SimpleGrantedAuthority> = mutableListOf()
                 roles.forEach { authorities.add(SimpleGrantedAuthority(it)) }
 
-                val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(username, null)
+                val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken =
+                    UsernamePasswordAuthenticationToken(username, null)
                 SecurityContextHolder.getContext().authentication = usernamePasswordAuthenticationToken
                 filterChain.doFilter(request, response)
             } catch (exception: Exception) {

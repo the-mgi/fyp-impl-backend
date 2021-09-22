@@ -1,10 +1,11 @@
 package com.hu.fypimplbackend.domains
 
-import com.kdsp.ds.enums.Gender
+import com.hu.fypimplbackend.enums.Gender
 import javax.persistence.*
 import javax.validation.constraints.Pattern
 
 @Entity
+@Table(name = "sys_user")
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,8 +44,8 @@ class User(
     var imagePath: String? = null,
     var imageFileName: String? = null
 
-) {
+) : BaseEntity() {
     override fun toString(): String {
-        return "User(firstName=$firstName, lastName=$lastName, password=$password, emailAddress=$emailAddress, phoneNumber=$phoneNumber, address=$address, gender=$gender, roles=$roles, username=$username)"
+        return "User(id=$id, firstName=$firstName, lastName=$lastName, password=$password, username=$username, emailAddress=$emailAddress, phoneNumber=$phoneNumber, address=$address, gender=$gender, roles=$roles, imagePath=$imagePath, imageFileName=$imageFileName)"
     }
 }

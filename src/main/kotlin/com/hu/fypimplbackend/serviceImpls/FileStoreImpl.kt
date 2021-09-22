@@ -6,9 +6,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.S3Object
 import com.amazonaws.services.s3.model.S3ObjectInputStream
 import com.amazonaws.util.IOUtils
-import com.hu.fypimplbackend.services.FileStore
+import com.hu.fypimplbackend.services.IFileStore
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.InputStream
@@ -17,12 +16,12 @@ import java.util.*
 @Service
 class FileStoreImpl(
     @Autowired
-    private val amazonS3: AmazonS3
+    private val amazonS3: AmazonS3,
 
-) : FileStore {
+    @Autowired
+    private val loggerFactory: Logger
 
-    private val logger: Logger = LoggerFactory.getLogger(FileStoreImpl::class.java)
-
+) : IFileStore {
     /**
      * Function responsible to upload the images to specified bucket in S3Bucket
      *
@@ -51,9 +50,9 @@ class FileStoreImpl(
         }
         try {
             amazonS3.putObject(path, fileName, inputStream, objectMetadata)
-            logger.info("Image uploaded Successfully")
+            loggerFactory.info("Image uploaded Successfully")
         } catch (e: AmazonServiceException) {
-            logger.error("Image failed to upload")
+            loggerFactory.error("Image failed to upload")
             throw IllegalArgumentException("Failed to upload the file", e)
         }
     }
@@ -73,10 +72,10 @@ class FileStoreImpl(
         try {
             val s3Object: S3Object = amazonS3.getObject(path, key)
             val objectContent: S3ObjectInputStream = s3Object.objectContent
-            logger.info("Image downloaded Successfully")
+            loggerFactory.info("Image downloaded Successfully")
             return IOUtils.toByteArray(objectContent)
         } catch (e: Exception) {
-            logger.error("Image failed to download")
+            loggerFactory.error("Image failed to download")
             throw IllegalStateException("Failed to download the file", e)
         }
     }

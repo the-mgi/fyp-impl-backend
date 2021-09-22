@@ -1,7 +1,7 @@
 package com.hu.fypimplbackend.repositories
 
-import com.kdsp.ds.domains.Role
-import com.kdsp.ds.enums.RoleTypes
+import com.hu.fypimplbackend.domains.Role
+import com.hu.fypimplbackend.enums.RoleTypes
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.*

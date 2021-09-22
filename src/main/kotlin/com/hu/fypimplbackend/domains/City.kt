@@ -1,9 +1,11 @@
-package com.kdsp.ds.domains
+package com.hu.fypimplbackend.domains
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
 
 @Entity
 @Table(name = "city")
+@JsonIgnoreProperties(ignoreUnknown = true)
 class City(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,10 +20,18 @@ class City(
 
     @OneToOne
     @JoinColumn(
-        name = "country_code",
-        referencedColumnName = "country_code"
+        name = "country_id",
+        referencedColumnName = "country_id",
+        nullable = false
     )
-    var country: Country? = null
+    var country: Country? = null,
+
+    @OneToOne
+    @JoinColumn(
+        name = "state_id",
+        referencedColumnName = "state_id"
+    )
+    var state: State? = null
 
 ) : BaseEntity() {
     override fun equals(other: Any?): Boolean {
@@ -40,6 +50,6 @@ class City(
     }
 
     override fun toString(): String {
-        return "City(cityId=$cityId, cityName=$cityName, cityCode=$cityCode, country=$country)"
+        return "City(cityId=$cityId, cityName=$cityName, cityCode=$cityCode, country=$country, state=$state)"
     }
 }

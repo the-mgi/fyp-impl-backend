@@ -1,13 +1,13 @@
-package com.kdsp.ds.dto
+package com.hu.fypimplbackend.dto
 
-import com.kdsp.ds.domains.Address
+import com.hu.fypimplbackend.domains.Address
 
 data class UpdateUserDTO(
-    var firstName: String? = null,
-    var lastName: String? = null,
-    var password: String? = null,
-    var phoneNumber: String? = null,
-    var address: Address? = null,
-    var imagePath: String? = null,
-    var imageFileName: String? = null
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val password: String? = null,
+    val phoneNumber: String? = null,
+    val address: Address? = null,
+    val imagePath: String? = null,
+    val imageFileName: String? = null
 )

@@ -1,11 +1,19 @@
 package com.hu.fypimplbackend
 
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @SpringBootApplication
-class FypImplBackendApplication
+class FypImplBackendApplication {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            SpringApplication.run(FypImplBackendApplication::class.java, *args)
+        }
+    }
 
-fun main(args: Array<String>) {
-    runApplication<FypImplBackendApplication>(*args)
+    @Bean
+    fun passwordEncoder() = BCryptPasswordEncoder()
 }

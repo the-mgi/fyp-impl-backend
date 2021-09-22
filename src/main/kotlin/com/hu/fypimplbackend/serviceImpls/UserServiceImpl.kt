@@ -2,12 +2,12 @@ package com.hu.fypimplbackend.serviceImpls
 
 import com.hu.fypimplbackend.config.ApplicationConfig
 import com.hu.fypimplbackend.domains.User
+import com.hu.fypimplbackend.dto.UpdateUserDTO
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.services.IFileStore
-import com.hu.fypimplbackend.services.UserService
+import com.hu.fypimplbackend.services.IUserService
 import org.apache.http.entity.ContentType.*
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -21,7 +21,7 @@ import java.util.*
 @Service
 class UserServiceImpl(
     @Autowired
-    private val IFileStore: IFileStore,
+    private val iFileStore: IFileStore,
 
     @Autowired
     private val applicationConfig: ApplicationConfig,
@@ -30,15 +30,18 @@ class UserServiceImpl(
     private val userRepository: UserRepository,
 
     @Autowired
-    private val passwordEncoder: BCryptPasswordEncoder
+    private val passwordEncoder: BCryptPasswordEncoder,
 
-) : UserService {
+    @Autowired
+    private val loggerFactory: Logger
 
-    private val loggerFactory: Logger = LoggerFactory.getLogger(UserServiceImpl::class.java)
+) : IUserService {
     override fun saveUser(user: User): User {
         this.loggerFactory.info("saveUser in UserService")
         user.password = this.passwordEncoder.encode(user.password)
-        return this.userRepository.save(user)
+        val savedUser = this.userRepository.save(user)
+        savedUser.password = null
+        return savedUser
     }
 
     override fun getUser(username: String): User {
@@ -52,7 +55,7 @@ class UserServiceImpl(
 
     override fun updateProfileImage(username: String, multipartFile: MultipartFile): Pair<String, String> {
         if (multipartFile.isEmpty) {
-            throw IllegalStateException("Cannot upload empty file");
+            throw IllegalStateException("Cannot upload empty file")
         }
         if (!listOf(
                 IMAGE_PNG.mimeType,
@@ -61,7 +64,7 @@ class UserServiceImpl(
                 IMAGE_JPEG.mimeType
             ).contains(multipartFile.contentType)
         ) {
-            throw IllegalStateException("FIle uploaded is not an image");
+            throw IllegalStateException("FIle uploaded is not an image")
         }
 
         // getting the file metadata
@@ -73,7 +76,7 @@ class UserServiceImpl(
         val fileName = multipartFile.originalFilename!!
 
         try {
-            this.IFileStore.upload(path, fileName, Optional.of(fileMetadata), multipartFile.inputStream)
+            this.iFileStore.upload(path, fileName, Optional.of(fileMetadata), multipartFile.inputStream)
             loggerFactory.info("Image uploaded successfully")
             return Pair(path, fileName)
         } catch (e: IOException) {
@@ -84,7 +87,7 @@ class UserServiceImpl(
     override fun downloadImage(username: String): ByteArray {
         val user = this.userRepository.findByUsername(username)
         if (user.isPresent) {
-            return this.IFileStore.download(user.get().imagePath!!, user.get().imageFileName!!)
+            return this.iFileStore.download(user.get().imagePath!!, user.get().imageFileName!!)
         }
         return ByteArray(0)
     }
@@ -104,4 +107,17 @@ class UserServiceImpl(
         }
         throw UsernameNotFoundException("Username not found")
     }
+
+    override fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User {
+        val oldUserOptional = this.userRepository.findByUsername(username)
+        oldUserOptional.get().password = null
+        return oldUserOptional.get()
+//        if (oldUserOptional.isPresent) {
+//            val oldUser = oldUserOptional.get()
+//            this.userMapper.updateUserAsPerUpdateUserDTO(updateUserDTO, oldUser)
+//            return oldUser
+//        }
+//        throw Exception("")
+    }
+
 }

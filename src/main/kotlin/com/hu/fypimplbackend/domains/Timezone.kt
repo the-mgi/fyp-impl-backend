@@ -1,13 +1,25 @@
 package com.hu.fypimplbackend.domains
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.Embeddable
 
 @Embeddable
+@JsonIgnoreProperties(ignoreUnknown = true)
 class Timezone(
+    @JsonProperty("zoneName")
     var zoneName: String? = null,
+
+    @JsonProperty("gmtOffset")
     var gmtOffset: Long? = null,
+
+    @JsonProperty("gmtOffsetName")
     var gmtOffsetName: String? = null,
+
+    @JsonProperty("abbreviation")
     var abbreviation: String? = null,
+
+    @JsonProperty("tzName")
     var tzName: String? = null
 ) {
     override fun equals(other: Any?): Boolean {

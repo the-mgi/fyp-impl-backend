@@ -1,6 +1,6 @@
-package com.kdsp.ds.security
+package com.hu.fypimplbackend.security
 
-import com.kdsp.ds.security.filters.CustomAuthenticationFilter
+import com.hu.fypimplbackend.security.filters.CustomAuthenticationFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -30,7 +30,7 @@ class SecurityConfiguration(
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.authorizeRequests().antMatchers("/users/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**").permitAll()
+        http.authorizeRequests().antMatchers("/user/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**").permitAll()
 
         http.authorizeRequests().anyRequest().authenticated()
 //        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority(RoleTypes.ROLE_USER.name)

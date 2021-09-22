@@ -1,4 +1,4 @@
-package com.kdsp.ds.dto
+package com.hu.fypimplbackend.dto
 
 data class UsernameAndPasswordDTO(
     val username: String? = null,

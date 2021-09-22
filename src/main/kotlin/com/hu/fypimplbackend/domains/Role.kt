@@ -1,17 +1,20 @@
 package com.hu.fypimplbackend.domains
 
-import com.kdsp.ds.enums.RoleTypes
+import com.hu.fypimplbackend.enums.RoleTypes
 import javax.persistence.*
 
 @Entity
+@Table(name = "role")
 class Role(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null,
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     var roleName: RoleTypes? = null
-) {
+
+) : BaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

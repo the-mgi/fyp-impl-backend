@@ -13,11 +13,14 @@ class Address(
     @OneToOne
     @JoinColumn(
         name = "city_id",
-        referencedColumnName = "city_id"
+        referencedColumnName = "city_id",
+        nullable = false
     )
     var city: City? = null,
 
+    @Column(nullable = false)
     var addressLineOne: String? = null,
+
     var addressLineTwo: String? = null,
 
 ) : BaseEntity() {
