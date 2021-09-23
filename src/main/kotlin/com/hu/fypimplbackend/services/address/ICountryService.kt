@@ -5,4 +5,5 @@ import com.hu.fypimplbackend.domains.Country
 interface ICountryService {
     fun saveCountry(country: Country): Country
     fun getAllCountries(): List<Country>
+    fun getCountryDetails(countryId: Long): Country
 }

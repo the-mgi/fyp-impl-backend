@@ -1,7 +1,7 @@
 package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.UpdateUserDTO
+import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
@@ -25,13 +25,13 @@ class UserController(
     @PostMapping("/save")
     fun saveUser(@RequestBody user: User): ResponseEntity<BaseResponse> {
         loggerFactory.info("saveUser in UserController")
-        return getSuccessObject(this.iUserService.saveUser(user), HttpStatus.CREATED)
+        return getSuccessObject(this.iUserService.saveUser(user), HttpStatus.CREATED.value())
     }
 
     @PutMapping("/edit/{username}")
     fun updateUser(@RequestBody updateUserDTO: UpdateUserDTO, @PathVariable("username") username: String): ResponseEntity<BaseResponse> {
         loggerFactory.info("updateUser in UserController")
-        return getSuccessObject(this.iUserService.updateUser(username, updateUserDTO), HttpStatus.NO_CONTENT)
+        return getSuccessObject(this.iUserService.updateUser(username, updateUserDTO), HttpStatus.NO_CONTENT.value())
     }
 
     @DeleteMapping("/delete/{username}")
@@ -43,6 +43,6 @@ class UserController(
 
     @GetMapping("/{username}")
     fun getUser(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
-        return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK)
+        return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK.value())
     }
 }

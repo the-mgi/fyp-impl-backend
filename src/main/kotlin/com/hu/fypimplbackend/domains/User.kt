@@ -12,7 +12,7 @@ class User(
     @Column(name = "user_id")
     var id: Long? = null,
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     var firstName: String? = null,
 
     var lastName: String? = null,

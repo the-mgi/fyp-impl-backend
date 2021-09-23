@@ -1,12 +1,11 @@
 package com.hu.fypimplbackend.dto.response
 
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 class SuccessResponseDTO(
     var payload: Any,
 
-    status: HttpStatus,
+    status: Int,
     hasError: Boolean = false
 ) : BaseResponse(hasError, status) {
     override fun toString(): String {
@@ -14,7 +13,7 @@ class SuccessResponseDTO(
     }
 
     companion object {
-        fun getSuccessObject(payload: Any, httpStatus: HttpStatus): ResponseEntity<BaseResponse> = ResponseEntity.ok().body(SuccessResponseDTO(payload, httpStatus))
+        fun getSuccessObject(payload: Any, httpStatus: Int): ResponseEntity<BaseResponse> = ResponseEntity.status(httpStatus).body(SuccessResponseDTO(payload, httpStatus))
         fun getDeleteResponse(): ResponseEntity<Any> = ResponseEntity.noContent().build()
     }
 }
