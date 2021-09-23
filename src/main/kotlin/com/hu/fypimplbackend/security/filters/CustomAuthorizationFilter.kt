@@ -3,6 +3,7 @@ package com.hu.fypimplbackend.security.filters
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders.AUTHORIZATION
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse
 
 class CustomAuthorizationFilter : OncePerRequestFilter() {
     private val loggerFactory: Logger = LoggerFactory.getLogger(CustomAuthenticationFilter::class.java)
+    private val objectMapper = ObjectMapperSingleton.objectMapper
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -53,7 +55,7 @@ class CustomAuthorizationFilter : OncePerRequestFilter() {
                 response.contentType = MediaType.APPLICATION_JSON_VALUE
                 val errors = HashMap<String, String>()
                 errors["error_message"] = exception.message.toString()
-                ObjectMapper().writeValue(response.outputStream, errors)
+                objectMapper.writeValue(response.outputStream, errors)
             }
         } else {
             filterChain.doFilter(request, response)

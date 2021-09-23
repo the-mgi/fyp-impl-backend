@@ -33,36 +33,51 @@ class MiscellaneousController(
     @PostMapping("/country/save")
     fun saveCountry(@RequestBody country: Country): ResponseEntity<BaseResponse> {
         loggerFactory.info("saveCountry in MiscellaneousController")
-        return getSuccessObject(this.iCountryService.saveCountry(country), HttpStatus.CREATED)
+        return getSuccessObject(this.iCountryService.saveCountry(country), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/country/all")
     fun getAllCountries(): ResponseEntity<BaseResponse> {
         loggerFactory.info("getAllCountries in MiscellaneousController")
-        return getSuccessObject(this.iCountryService.getAllCountries(), HttpStatus.OK)
+        return getSuccessObject(this.iCountryService.getAllCountries(), HttpStatus.OK.value())
+    }
+
+    @GetMapping("/country/{countryId}")
+    fun getCountryDetails(@PathVariable("countryId") countryId: Long): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iCountryService.getCountryDetails(countryId), HttpStatus.OK.value())
     }
 
     @PostMapping("/state/save")
     fun saveState(@RequestBody state: State) : ResponseEntity<BaseResponse> {
         loggerFactory.info("saveState in MiscellaneousController")
-        return getSuccessObject(this.iStateService.saveState(state), HttpStatus.CREATED)
+        return getSuccessObject(this.iStateService.saveState(state), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/state/all")
     fun getAllStates() : ResponseEntity<BaseResponse> {
         loggerFactory.info("getAllStates in MiscellaneousController")
-        return getSuccessObject(this.iStateService.getAllStates(), HttpStatus.OK)
+        return getSuccessObject(this.iStateService.getAllStates(), HttpStatus.OK.value())
+    }
+
+    @GetMapping("/state/{stateId}")
+    fun getStateDetails(@PathVariable("stateId") stateId: Long): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iStateService.getStateDetails(stateId), HttpStatus.OK.value())
     }
 
     @PostMapping("/city/save")
     fun saveCity(@RequestBody city: City) : ResponseEntity<BaseResponse> {
         loggerFactory.info("saveCity in MiscellaneousController")
-        return getSuccessObject(this.iCityService.saveCity(city), HttpStatus.CREATED)
+        return getSuccessObject(this.iCityService.saveCity(city), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/city/all")
     fun getAllCities(): ResponseEntity<BaseResponse> {
         loggerFactory.info("getAllCities in MiscellaneousController")
-        return getSuccessObject(this.iCityService.getAllCities(), HttpStatus.OK)
+        return getSuccessObject(this.iCityService.getAllCities(), HttpStatus.OK.value())
+    }
+
+    @GetMapping("/city/{cityId}")
+    fun getCityDetails(@PathVariable("cityId") cityId: Long) : ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iCityService.getCityDetails(cityId), HttpStatus.OK.value())
     }
 }

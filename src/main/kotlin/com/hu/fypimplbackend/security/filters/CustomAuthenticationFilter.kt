@@ -2,8 +2,8 @@ package com.hu.fypimplbackend.security.filters
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.hu.fypimplbackend.dto.UsernameAndPasswordDTO
+import com.hu.fypimplbackend.dto.user.UsernameAndPasswordDTO
+import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -23,7 +23,7 @@ class CustomAuthenticationFilter(
     private val authenticationManagerSpring: AuthenticationManager
 
 ) : UsernamePasswordAuthenticationFilter() {
-    private val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapperSingleton.objectMapper
     private val loggerFactory: Logger = LoggerFactory.getLogger(CustomAuthenticationFilter::class.java)
 
     @Throws(IOException::class)

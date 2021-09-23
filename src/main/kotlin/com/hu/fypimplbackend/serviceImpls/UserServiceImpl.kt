@@ -2,13 +2,14 @@ package com.hu.fypimplbackend.serviceImpls
 
 import com.hu.fypimplbackend.config.ApplicationConfig
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.UpdateUserDTO
+import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.services.IFileStore
 import com.hu.fypimplbackend.services.IUserService
 import org.apache.http.entity.ContentType.*
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.util.*
+import javax.persistence.EntityNotFoundException
 
 @Service
 class UserServiceImpl(
@@ -36,6 +38,7 @@ class UserServiceImpl(
     private val loggerFactory: Logger
 
 ) : IUserService {
+    @Throws(DataIntegrityViolationException::class)
     override fun saveUser(user: User): User {
         this.loggerFactory.info("saveUser in UserService")
         user.password = this.passwordEncoder.encode(user.password)
@@ -46,7 +49,12 @@ class UserServiceImpl(
 
     override fun getUser(username: String): User {
         this.loggerFactory.info("getUser in UserService")
-        return this.userRepository.findByUsername(username).get()
+        val optionalUser = this.userRepository.findByUsername(username);
+        return if (optionalUser.isPresent) {
+            optionalUser.get()
+        } else {
+            throw EntityNotFoundException()
+        }
     }
 
     override fun deleteUser(username: String) {

@@ -15,9 +15,6 @@ class City(
     @Column(nullable = false)
     val cityName: String? = null,
 
-    @Column(nullable = false, unique = true)
-    var cityCode: String? = null,
-
     @OneToOne
     @JoinColumn(
         name = "country_id",
@@ -50,6 +47,6 @@ class City(
     }
 
     override fun toString(): String {
-        return "City(cityId=$cityId, cityName=$cityName, cityCode=$cityCode, country=$country, state=$state)"
+        return "City(cityId=$cityId, cityName=$cityName, country=$country, state=$state)"
     }
 }

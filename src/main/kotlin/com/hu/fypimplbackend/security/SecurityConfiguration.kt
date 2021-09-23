@@ -1,6 +1,7 @@
 package com.hu.fypimplbackend.security
 
 import com.hu.fypimplbackend.security.filters.CustomAuthenticationFilter
+import com.hu.fypimplbackend.utility.JWTAuthenticationEntryPoint
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,7 +21,10 @@ class SecurityConfiguration(
     private val userDetailsService: UserDetailsService,
 
     @Autowired
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+
+    @Autowired
+    private val jwtAuthenticationEntryPoint: JWTAuthenticationEntryPoint
 
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {
@@ -29,8 +33,9 @@ class SecurityConfiguration(
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
+        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.authorizeRequests().antMatchers("/user/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**").permitAll()
+        http.authorizeRequests().antMatchers("/user/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**", "/miscellaneous/**").permitAll()
 
         http.authorizeRequests().anyRequest().authenticated()
 //        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority(RoleTypes.ROLE_USER.name)

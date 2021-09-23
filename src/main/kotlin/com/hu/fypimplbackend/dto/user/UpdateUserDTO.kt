@@ -1,4 +1,4 @@
-package com.hu.fypimplbackend.dto
+package com.hu.fypimplbackend.dto.user
 
 import com.hu.fypimplbackend.domains.Address
 
