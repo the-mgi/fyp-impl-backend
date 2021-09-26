@@ -1,6 +1,6 @@
 package com.hu.fypimplbackend.domains
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.*
 import javax.persistence.*
 
 @Entity
@@ -23,6 +23,9 @@ class State(
         name = "country_id",
         referencedColumnName = "country_id"
     )
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "countryId")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonBackReference
     var country: Country? = null,
 
     var iso2: String? = null,

@@ -22,7 +22,11 @@ class StateServiceImpl(
     @Throws(DataIntegrityViolationException::class)
     override fun saveState(state: State): State {
         loggerFactory.info("saveState in StateServiceImpl")
-        return this.stateRepository.save(state)
+        return if (state.stateId != null && this.stateRepository.existsById(state.stateId!!)) {
+            throw DataIntegrityViolationException("State with the same ID already exists")
+        } else {
+            this.stateRepository.save(state)
+        }
     }
 
     override fun getAllStates(): List<State> {

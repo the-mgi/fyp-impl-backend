@@ -1,6 +1,9 @@
 package com.hu.fypimplbackend.domains
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.JsonIdentityReference
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import javax.persistence.*
 
 @Entity
@@ -10,10 +13,10 @@ class City(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "city_id")
-    val cityId: Long? = null,
+    var cityId: Long? = null,
 
     @Column(nullable = false)
-    val cityName: String? = null,
+    var cityName: String? = null,
 
     @OneToOne
     @JoinColumn(
@@ -21,6 +24,8 @@ class City(
         referencedColumnName = "country_id",
         nullable = false
     )
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "countryId")
+    @JsonIdentityReference(alwaysAsId = true)
     var country: Country? = null,
 
     @OneToOne
@@ -28,6 +33,8 @@ class City(
         name = "state_id",
         referencedColumnName = "state_id"
     )
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "stateId")
+    @JsonIdentityReference(alwaysAsId = true)
     var state: State? = null
 
 ) : BaseEntity() {

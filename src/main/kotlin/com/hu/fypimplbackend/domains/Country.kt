@@ -1,11 +1,9 @@
 package com.hu.fypimplbackend.domains
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
 
 @Entity
 @Table(name = "country")
-@JsonIgnoreProperties(ignoreUnknown = true)
 class Country(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

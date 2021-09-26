@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.util.*
 import javax.persistence.EntityNotFoundException
+import kotlin.jvm.Throws
 
 @Service
 class UserServiceImpl(

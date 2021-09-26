@@ -1,8 +1,8 @@
 package com.hu.fypimplbackend.controllers
 
-import com.hu.fypimplbackend.domains.City
 import com.hu.fypimplbackend.domains.Country
 import com.hu.fypimplbackend.domains.State
+import com.hu.fypimplbackend.dto.address.SaveCityDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
 import com.hu.fypimplbackend.services.address.ICityService
@@ -12,7 +12,10 @@ import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
+import kotlin.jvm.Throws
 
 @RestController
 @RequestMapping("/miscellaneous")
@@ -31,7 +34,7 @@ class MiscellaneousController(
 
 ) {
     @PostMapping("/country/save")
-    fun saveCountry(@RequestBody country: Country): ResponseEntity<BaseResponse> {
+    fun saveCountry(@Valid @RequestBody country: Country): ResponseEntity<BaseResponse> {
         loggerFactory.info("saveCountry in MiscellaneousController")
         return getSuccessObject(this.iCountryService.saveCountry(country), HttpStatus.CREATED.value())
     }
@@ -48,13 +51,13 @@ class MiscellaneousController(
     }
 
     @PostMapping("/state/save")
-    fun saveState(@RequestBody state: State) : ResponseEntity<BaseResponse> {
+    fun saveState(@RequestBody state: State): ResponseEntity<BaseResponse> {
         loggerFactory.info("saveState in MiscellaneousController")
         return getSuccessObject(this.iStateService.saveState(state), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/state/all")
-    fun getAllStates() : ResponseEntity<BaseResponse> {
+    fun getAllStates(): ResponseEntity<BaseResponse> {
         loggerFactory.info("getAllStates in MiscellaneousController")
         return getSuccessObject(this.iStateService.getAllStates(), HttpStatus.OK.value())
     }
@@ -65,9 +68,9 @@ class MiscellaneousController(
     }
 
     @PostMapping("/city/save")
-    fun saveCity(@RequestBody city: City) : ResponseEntity<BaseResponse> {
-        loggerFactory.info("saveCity in MiscellaneousController")
-        return getSuccessObject(this.iCityService.saveCity(city), HttpStatus.CREATED.value())
+    fun saveCity(@Valid @RequestBody saveCityDTO: SaveCityDTO): ResponseEntity<BaseResponse> {
+        loggerFactory.info("saveCity in MiscellaneousController $saveCityDTO")
+        return getSuccessObject(this.iCityService.saveCity(saveCityDTO), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/city/all")
@@ -77,7 +80,7 @@ class MiscellaneousController(
     }
 
     @GetMapping("/city/{cityId}")
-    fun getCityDetails(@PathVariable("cityId") cityId: Long) : ResponseEntity<BaseResponse> {
+    fun getCityDetails(@PathVariable("cityId") cityId: Long): ResponseEntity<BaseResponse> {
         return getSuccessObject(this.iCityService.getCityDetails(cityId), HttpStatus.OK.value())
     }
 }

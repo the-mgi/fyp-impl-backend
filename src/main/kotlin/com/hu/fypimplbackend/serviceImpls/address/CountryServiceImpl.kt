@@ -22,7 +22,11 @@ class CountryServiceImpl(
     @Throws(DataIntegrityViolationException::class)
     override fun saveCountry(country: Country): Country {
         loggerFactory.info("saveCountry in CountryServiceImpl")
-        return this.countryRepository.save(country)
+        return if (country.countryId != null && this.countryRepository.existsById(country.countryId!!)) {
+            throw DataIntegrityViolationException("Country with the same ID already exists")
+        } else {
+            this.countryRepository.save(country)
+        }
     }
 
     override fun getAllCountries(): List<Country> {

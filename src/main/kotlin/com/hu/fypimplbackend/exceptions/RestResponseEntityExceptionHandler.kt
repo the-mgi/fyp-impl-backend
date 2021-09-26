@@ -2,6 +2,9 @@ package com.hu.fypimplbackend.exceptions
 
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO.Companion.getErrorObject
+import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
+import org.slf4j.Logger
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,23 +16,39 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.persistence.EntityNotFoundException
 
 @ControllerAdvice
-class RestResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
+class RestResponseEntityExceptionHandler(
+    @Autowired
+    private val loggerFactory: Logger
+
+) : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(EntityNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun entityNotFoundException(
+    fun handleEntityNotFoundException(
         entityNotFoundException: EntityNotFoundException,
         webRequest: WebRequest
     ): ResponseEntity<ErrorResponseDTO> {
+        loggerFactory.warn("EntityNotFoundException occurred")
         return getErrorObject("Resource not found", entityNotFoundException.message!!, HttpStatus.NOT_FOUND.value())
     }
 
     @ExceptionHandler(DataIntegrityViolationException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    fun dataIntegrityViolationException(
+    fun handleDataIntegrityViolationException(
         dataIntegrityViolationException: DataIntegrityViolationException,
-        webResponseStatus: ResponseStatus
-    ) : ResponseEntity<ErrorResponseDTO> {
+        webRequest: WebRequest
+    ): ResponseEntity<ErrorResponseDTO> {
+        loggerFactory.warn("DataIntegrityViolationException occurred")
         return getErrorObject("Conflict", dataIntegrityViolationException.message!!, HttpStatus.CONFLICT.value())
+    }
+
+    @ExceptionHandler(NestedObjectDoesNotExistException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleNestedObjectDoesNotExistException(
+        nestedObjectDoesNotExistException: NestedObjectDoesNotExistException,
+        webRequest: WebRequest
+    ): ResponseEntity<ErrorResponseDTO> {
+        loggerFactory.warn("NestedObjectDoesNotExistException occurred")
+        return getErrorObject("Not found", nestedObjectDoesNotExistException.message!!, HttpStatus.NOT_FOUND.value())
     }
 }

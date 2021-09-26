@@ -1,6 +1,5 @@
 package com.hu.fypimplbackend
 
-import org.modelmapper.ModelMapper
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.context.annotation.Bean
@@ -17,9 +16,4 @@ class FypImplBackendApplication {
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
-
-    @Bean
-    fun modelMapper(): ModelMapper {
-        return ModelMapper()
-    }
 }
