@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class AmazonConfig(
     @Autowired
-    private val applicationConfig: ApplicationConfig
+    private val applicationConfig: AWSApplicationConfig
 ) {
     @Bean
     fun s3(): AmazonS3 {

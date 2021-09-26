@@ -13,7 +13,9 @@ class SuccessResponseDTO(
     }
 
     companion object {
-        fun getSuccessObject(payload: Any, httpStatus: Int): ResponseEntity<BaseResponse> = ResponseEntity.status(httpStatus).body(SuccessResponseDTO(payload, httpStatus))
+        fun getSuccessObject(payload: Any, httpStatus: Int): ResponseEntity<BaseResponse> =
+            ResponseEntity.status(httpStatus).body(SuccessResponseDTO(payload, httpStatus))
+
         fun getDeleteResponse(): ResponseEntity<Any> = ResponseEntity.noContent().build()
     }
 }

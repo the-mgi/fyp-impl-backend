@@ -26,12 +26,12 @@ class CityServiceImpl(
     private val countryRepository: CountryRepository,
 
     @Autowired
-    private val loggerFactory: Logger,
+    private val objectTransformationUtil: ObjectTransformationUtil,
 
     @Autowired
-    private val objectTransformationUtil: ObjectTransformationUtil
+    private val loggerFactory: Logger,
 
-) : ICityService {
+    ) : ICityService {
 
     @Throws(DataIntegrityViolationException::class, NestedObjectDoesNotExistException::class)
     override fun saveCity(saveCityDTO: SaveCityDTO): City {
@@ -43,7 +43,7 @@ class CityServiceImpl(
         } else if (!state.isPresent) {
             throw NestedObjectDoesNotExistException("State with ID ${saveCityDTO.stateId} does not exist")
         } else {
-            val city = this.objectTransformationUtil.getCityFromCityDTO(saveCityDTO)
+            val city = this.objectTransformationUtil.getCityFromSaveCityDTO(saveCityDTO)
             city.country = country.get()
             city.state = state.get()
             this.cityRepository.save(city)

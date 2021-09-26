@@ -1,10 +1,10 @@
 package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
+import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.services.IUserService
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +29,10 @@ class UserController(
     }
 
     @PutMapping("/edit/{username}")
-    fun updateUser(@RequestBody updateUserDTO: UpdateUserDTO, @PathVariable("username") username: String): ResponseEntity<BaseResponse> {
+    fun updateUser(
+        @RequestBody updateUserDTO: UpdateUserDTO,
+        @PathVariable("username") username: String
+    ): ResponseEntity<BaseResponse> {
         loggerFactory.info("updateUser in UserController")
         return getSuccessObject(this.iUserService.updateUser(username, updateUserDTO), HttpStatus.NO_CONTENT.value())
     }

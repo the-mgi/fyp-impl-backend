@@ -23,7 +23,7 @@ class Address(
 
     var addressLineTwo: String? = null,
 
-) : BaseEntity() {
+    ) : BaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

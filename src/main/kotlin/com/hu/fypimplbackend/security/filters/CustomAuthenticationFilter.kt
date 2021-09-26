@@ -2,14 +2,19 @@ package com.hu.fypimplbackend.security.filters
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
+import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
+import com.hu.fypimplbackend.dto.user.Tokens
 import com.hu.fypimplbackend.dto.user.UsernameAndPasswordDTO
 import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
 import java.util.*
@@ -59,14 +64,28 @@ class CustomAuthenticationFilter(
 
         val refreshToken = JWT.create()
             .withSubject(user.username)
-            .withExpiresAt(Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000)))
+            .withExpiresAt(Date(System.currentTimeMillis() + (SEVEN_DAYS_VALIDITY)))
             .withIssuer(request.requestURL.toString())
             .sign(algorithm)
 
-        val map = HashMap<String, String>()
-        map["access_token"] = accessToken
-        map["refresh_token"] = refreshToken
+        val tokens = Tokens(accessToken, refreshToken)
         response.contentType = APPLICATION_JSON_VALUE
-        this.objectMapper.writeValue(response.outputStream, map)
+        this.objectMapper.writeValue(response.outputStream, SuccessResponseDTO(tokens, HttpStatus.OK.value()))
+    }
+
+    override fun unsuccessfulAuthentication(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        authenticationException: AuthenticationException
+    ) {
+        response.contentType = APPLICATION_JSON_VALUE
+        this.objectMapper.writeValue(
+            response.outputStream,
+            ErrorResponseDTO("Username password combination does not exist", "Forbidden", HttpStatus.FORBIDDEN.value())
+        )
+    }
+
+    companion object {
+        private const val SEVEN_DAYS_VALIDITY = 7 * 24 * 60 * 60 * 1000;
     }
 }

@@ -38,7 +38,7 @@ class User(
     @Enumerated(EnumType.STRING)
     var gender: Gender? = null,
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     var roles: MutableList<Role> = mutableListOf(),
 
     var imagePath: String? = null,

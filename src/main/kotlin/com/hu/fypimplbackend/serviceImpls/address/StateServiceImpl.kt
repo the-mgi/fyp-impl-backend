@@ -1,14 +1,17 @@
 package com.hu.fypimplbackend.serviceImpls.address
 
 import com.hu.fypimplbackend.domains.State
+import com.hu.fypimplbackend.dto.address.SaveStateDTO
+import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
+import com.hu.fypimplbackend.repositories.address.CountryRepository
 import com.hu.fypimplbackend.repositories.address.StateRepository
 import com.hu.fypimplbackend.services.address.IStateService
+import com.hu.fypimplbackend.utility.ObjectTransformationUtil
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import javax.persistence.EntityNotFoundException
-import kotlin.jvm.Throws
 
 @Service
 class StateServiceImpl(
@@ -16,15 +19,24 @@ class StateServiceImpl(
     private val stateRepository: StateRepository,
 
     @Autowired
+    private val countryRepository: CountryRepository,
+
+    @Autowired
+    private val objectTransformationUtil: ObjectTransformationUtil,
+
+    @Autowired
     private val loggerFactory: Logger
 
 ) : IStateService {
-    @Throws(DataIntegrityViolationException::class)
-    override fun saveState(state: State): State {
+    @Throws(DataIntegrityViolationException::class, NestedObjectDoesNotExistException::class)
+    override fun saveState(saveStateDTO: SaveStateDTO): State {
         loggerFactory.info("saveState in StateServiceImpl")
-        return if (state.stateId != null && this.stateRepository.existsById(state.stateId!!)) {
-            throw DataIntegrityViolationException("State with the same ID already exists")
+        val country = this.countryRepository.findById(saveStateDTO.countryId)
+        return if (!country.isPresent) {
+            throw NestedObjectDoesNotExistException("Country with ID ${saveStateDTO.countryId} does not exist")
         } else {
+            val state = this.objectTransformationUtil.getStateFromSaveStateDTO(saveStateDTO)
+            state.country = country.get()
             this.stateRepository.save(state)
         }
     }

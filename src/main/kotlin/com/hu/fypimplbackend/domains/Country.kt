@@ -23,8 +23,13 @@ class Country(
     var topLevelDomain: String? = null,
     var region: String? = null,
     var subRegion: String? = null,
+
+    @Column(nullable = false)
     var latitude: Double? = null,
+
+    @Column(nullable = false)
     var longitude: Double? = null,
+
     var activeStatus: Boolean = true,
 
     @Embedded

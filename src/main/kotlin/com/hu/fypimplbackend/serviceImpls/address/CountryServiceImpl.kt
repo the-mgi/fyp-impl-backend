@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import javax.persistence.EntityNotFoundException
-import kotlin.jvm.Throws
 
 @Service
 class CountryServiceImpl(

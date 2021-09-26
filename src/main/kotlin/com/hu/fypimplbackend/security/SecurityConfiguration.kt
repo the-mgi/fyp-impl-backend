@@ -33,7 +33,6 @@ class SecurityConfiguration(
 
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
-        http.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         http.authorizeRequests().antMatchers("/user/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**", "/miscellaneous/**").permitAll()
 

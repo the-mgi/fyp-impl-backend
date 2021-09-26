@@ -29,7 +29,9 @@ class State(
     var country: Country? = null,
 
     var iso2: String? = null,
-    var activeStatus: String? = null,
+
+    @Column(nullable = false)
+    var activeStatus: Boolean? = null,
 
     @Column(nullable = false)
     var latitude: Double? = null,
@@ -37,7 +39,7 @@ class State(
     @Column(nullable = false)
     var longitude: Double? = null,
 
-) : BaseEntity() {
+    ) : BaseEntity() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

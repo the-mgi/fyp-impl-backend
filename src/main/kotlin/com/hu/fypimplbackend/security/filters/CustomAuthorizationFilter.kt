@@ -2,12 +2,13 @@ package com.hu.fypimplbackend.security.filters
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
 import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,6 +31,7 @@ class CustomAuthorizationFilter : OncePerRequestFilter() {
             return
         }
         val authorizationHeader = request.getHeader(AUTHORIZATION)
+        loggerFactory.info("authorizationHeader $authorizationHeader")
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 val token = authorizationHeader.substringAfter("Bearer ")
@@ -49,12 +51,16 @@ class CustomAuthorizationFilter : OncePerRequestFilter() {
                 filterChain.doFilter(request, response)
             } catch (exception: Exception) {
                 loggerFactory.error("doFilterInternal in CustomAuthorizationFilter ${exception.message}")
-                response.setHeader("error", exception.message.toString())
-                response.status = HttpStatus.FORBIDDEN.value()
-                response.contentType = MediaType.APPLICATION_JSON_VALUE
-                val errors = HashMap<String, String>()
-                errors["error_message"] = exception.message.toString()
-                objectMapper.writeValue(response.outputStream, errors)
+                response.contentType = APPLICATION_JSON_VALUE
+                this.objectMapper.writeValue(
+                    response.outputStream,
+                    ErrorResponseDTO(
+                        "Username password combination does not exist",
+                        "Forbidden",
+                        HttpStatus.FORBIDDEN.value()
+                    )
+
+                )
             }
         } else {
             filterChain.doFilter(request, response)

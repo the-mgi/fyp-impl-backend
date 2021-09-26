@@ -10,7 +10,11 @@ import javax.servlet.http.HttpServletResponse
 class JWTAuthenticationEntryPoint : AuthenticationEntryPoint {
     private val objectMapper = ObjectMapperSingleton.objectMapper
 
-    override fun commence(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, authenticationException: AuthenticationException) {
+    override fun commence(
+        httpServletRequest: HttpServletRequest,
+        httpServletResponse: HttpServletResponse,
+        authenticationException: AuthenticationException
+    ) {
 
     }
 }

@@ -14,6 +14,7 @@ class ErrorResponseDTO(
     }
 
     companion object {
-        fun getErrorObject(message: String, error: String, httpStatus: Int): ResponseEntity<ErrorResponseDTO> = ResponseEntity.status(httpStatus).body(ErrorResponseDTO(message, error, httpStatus))
+        fun getErrorObject(message: String, error: String, httpStatus: Int): ResponseEntity<ErrorResponseDTO> =
+            ResponseEntity.status(httpStatus).body(ErrorResponseDTO(message, error, httpStatus))
     }
 }

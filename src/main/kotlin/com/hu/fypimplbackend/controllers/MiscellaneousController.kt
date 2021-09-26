@@ -1,8 +1,8 @@
 package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.Country
-import com.hu.fypimplbackend.domains.State
 import com.hu.fypimplbackend.dto.address.SaveCityDTO
+import com.hu.fypimplbackend.dto.address.SaveStateDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
 import com.hu.fypimplbackend.services.address.ICityService
@@ -12,10 +12,8 @@ import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
-import kotlin.jvm.Throws
 
 @RestController
 @RequestMapping("/miscellaneous")
@@ -51,9 +49,9 @@ class MiscellaneousController(
     }
 
     @PostMapping("/state/save")
-    fun saveState(@RequestBody state: State): ResponseEntity<BaseResponse> {
+    fun saveState(@Valid @RequestBody saveStateDTO: SaveStateDTO): ResponseEntity<BaseResponse> {
         loggerFactory.info("saveState in MiscellaneousController")
-        return getSuccessObject(this.iStateService.saveState(state), HttpStatus.CREATED.value())
+        return getSuccessObject(this.iStateService.saveState(saveStateDTO), HttpStatus.CREATED.value())
     }
 
     @GetMapping("/state/all")
@@ -69,7 +67,7 @@ class MiscellaneousController(
 
     @PostMapping("/city/save")
     fun saveCity(@Valid @RequestBody saveCityDTO: SaveCityDTO): ResponseEntity<BaseResponse> {
-        loggerFactory.info("saveCity in MiscellaneousController $saveCityDTO")
+        loggerFactory.info("saveCity in MiscellaneousController")
         return getSuccessObject(this.iCityService.saveCity(saveCityDTO), HttpStatus.CREATED.value())
     }
 

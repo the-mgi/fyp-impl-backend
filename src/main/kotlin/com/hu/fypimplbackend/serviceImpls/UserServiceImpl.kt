@@ -1,6 +1,6 @@
 package com.hu.fypimplbackend.serviceImpls
 
-import com.hu.fypimplbackend.config.ApplicationConfig
+import com.hu.fypimplbackend.config.AWSApplicationConfig
 import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.repositories.UserRepository
@@ -27,7 +27,7 @@ class UserServiceImpl(
     private val iFileStore: IFileStore,
 
     @Autowired
-    private val applicationConfig: ApplicationConfig,
+    private val awsApplicationConfig: AWSApplicationConfig,
 
     @Autowired
     private val userRepository: UserRepository,
@@ -81,7 +81,7 @@ class UserServiceImpl(
             "Content-Type" to multipartFile.contentType!!,
             "Content-Length" to multipartFile.size.toString()
         )
-        val path = "${this.applicationConfig.profileImageBucket}/${UUID.randomUUID()}"
+        val path = "${this.awsApplicationConfig.profileImageBucket}/${UUID.randomUUID()}"
         val fileName = multipartFile.originalFilename!!
 
         try {
