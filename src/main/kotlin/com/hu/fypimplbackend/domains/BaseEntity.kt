@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.sql.Timestamp
-import javax.persistence.Column
-import javax.persistence.MappedSuperclass
-import javax.persistence.PrePersist
-import javax.persistence.PreUpdate
+import javax.persistence.*
 
 @MappedSuperclass
 @JsonIgnoreProperties(ignoreUnknown = true)

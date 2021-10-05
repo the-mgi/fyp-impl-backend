@@ -86,6 +86,6 @@ class CustomAuthenticationFilter(
     }
 
     companion object {
-        private const val SEVEN_DAYS_VALIDITY = 7 * 24 * 60 * 60 * 1000;
+        private const val SEVEN_DAYS_VALIDITY = 7 * 24 * 60 * 60 * 1000
     }
 }
