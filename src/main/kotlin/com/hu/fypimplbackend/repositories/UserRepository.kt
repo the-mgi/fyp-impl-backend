@@ -8,5 +8,6 @@ import java.util.*
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
     fun findByUsername(username: String): Optional<User>
+    fun getByUsername(username: String): User
     fun deleteByUsername(username: String)
 }

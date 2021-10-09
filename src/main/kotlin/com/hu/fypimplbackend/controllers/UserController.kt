@@ -34,7 +34,7 @@ class UserController(
         @PathVariable("username") username: String
     ): ResponseEntity<BaseResponse> {
         loggerFactory.info("updateUser in UserController")
-        return getSuccessObject(this.iUserService.updateUser(username, updateUserDTO), HttpStatus.NO_CONTENT.value())
+        return getSuccessObject(this.iUserService.updateUser(username, updateUserDTO), HttpStatus.OK.value())
     }
 
     @DeleteMapping("/delete/{username}")

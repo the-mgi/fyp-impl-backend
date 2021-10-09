@@ -1,0 +1,14 @@
+package com.hu.fypimplbackend.utility.mappers
+
+import com.hu.fypimplbackend.domains.User
+import com.hu.fypimplbackend.dto.user.UpdateUserDTO
+import org.mapstruct.*
+
+@Mapper
+interface UserUpdateUserMapper {
+    @BeanMapping(
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+    )
+    fun convertToModel(updateUserDTO: UpdateUserDTO, @MappingTarget user: User): User
+}

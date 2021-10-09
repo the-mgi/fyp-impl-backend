@@ -34,7 +34,15 @@ class SecurityConfiguration(
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        http.authorizeRequests().antMatchers("/user/save", "/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/**", "/miscellaneous/**").permitAll()
+        http.authorizeRequests().antMatchers(
+            "/user/**",
+            "/login",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/**",
+            "/miscellaneous/**",
+            "/role/**"
+        ).permitAll()
 
         http.authorizeRequests().anyRequest().authenticated()
 //        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority(RoleTypes.ROLE_USER.name)

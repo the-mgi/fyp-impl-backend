@@ -6,6 +6,7 @@ import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.services.IFileStore
 import com.hu.fypimplbackend.services.IUserService
+import com.hu.fypimplbackend.utility.MapperSingletons
 import org.apache.http.entity.ContentType.*
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.IOException
 import java.util.*
 import javax.persistence.EntityNotFoundException
-import kotlin.jvm.Throws
 
 @Service
 class UserServiceImpl(
@@ -39,23 +39,19 @@ class UserServiceImpl(
     private val loggerFactory: Logger
 
 ) : IUserService {
+    private val userMapper = MapperSingletons.userUpdateUserMapper
+
     @Throws(DataIntegrityViolationException::class)
     override fun saveUser(user: User): User {
         this.loggerFactory.info("saveUser in UserService")
         user.password = this.passwordEncoder.encode(user.password)
-        val savedUser = this.userRepository.save(user)
-        savedUser.password = null
-        return savedUser
+        return userRepository.save(user).apply { password = null }
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun getUser(username: String): User {
         this.loggerFactory.info("getUser in UserService")
-        val optionalUser = this.userRepository.findByUsername(username);
-        return if (optionalUser.isPresent) {
-            optionalUser.get()
-        } else {
-            throw EntityNotFoundException()
-        }
+        return this.userRepository.getByUsername(username)
     }
 
     override fun deleteUser(username: String) {
@@ -117,16 +113,12 @@ class UserServiceImpl(
         throw UsernameNotFoundException("Username not found")
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User {
-        val oldUserOptional = this.userRepository.findByUsername(username)
-        oldUserOptional.get().password = null
-        return oldUserOptional.get()
-//        if (oldUserOptional.isPresent) {
-//            val oldUser = oldUserOptional.get()
-//            this.userMapper.updateUserAsPerUpdateUserDTO(updateUserDTO, oldUser)
-//            return oldUser
-//        }
-//        throw Exception("")
+        val oldUserOptional = this.userRepository.getByUsername(username)
+        return this.userRepository.save(
+            userMapper.convertToModel(updateUserDTO, oldUserOptional).apply { id = oldUserOptional.id })
+            .apply { password = null }
     }
 
 }
