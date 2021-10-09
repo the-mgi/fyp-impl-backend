@@ -4,6 +4,7 @@ import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
+import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.services.IUserService
 import org.slf4j.Logger
@@ -47,5 +48,18 @@ class UserController(
     @GetMapping("/{username}")
     fun getUser(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
         return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK.value())
+    }
+
+    @PatchMapping("/forgot-password/{username}")
+    fun forgotPassword(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.forgotPassword(username), HttpStatus.OK.value())
+    }
+
+    @PatchMapping("/update-password/{username}")
+    fun updatePassword(
+        @PathVariable("username") username: String,
+        @RequestBody forgotPasswordDTO: ForgotPasswordDTO
+    ): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.updatePassword(username, forgotPasswordDTO), HttpStatus.OK.value())
     }
 }

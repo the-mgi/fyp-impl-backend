@@ -42,10 +42,11 @@ class User(
     var roles: MutableList<Role> = mutableListOf(),
 
     var imagePath: String? = null,
-    var imageFileName: String? = null
+    var imageFileName: String? = null,
+    var otpCode: String? = null
 
 ) : BaseEntity() {
     override fun toString(): String {
-        return "User(id=$id, firstName=$firstName, lastName=$lastName, password=$password, username=$username, emailAddress=$emailAddress, phoneNumber=$phoneNumber, address=$address, gender=$gender, roles=$roles, imagePath=$imagePath, imageFileName=$imageFileName)"
+        return "User(id=$id, firstName=$firstName, lastName=$lastName, password=$password, username=$username, emailAddress=$emailAddress, phoneNumber=$phoneNumber, address=$address, gender=$gender, roles=$roles, imagePath=$imagePath, imageFileName=$imageFileName, otpCode=$otpCode)"
     }
 }

@@ -4,7 +4,7 @@ import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import org.mapstruct.*
 
-@Mapper
+@Mapper(uses = [PresenceCheckUtils::class])
 interface UserUpdateUserMapper {
     @BeanMapping(
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,

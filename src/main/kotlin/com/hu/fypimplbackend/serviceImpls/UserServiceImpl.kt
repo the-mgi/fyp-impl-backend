@@ -2,11 +2,15 @@ package com.hu.fypimplbackend.serviceImpls
 
 import com.hu.fypimplbackend.config.AWSApplicationConfig
 import com.hu.fypimplbackend.domains.User
+import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.user.UpdateUserDTO
+import com.hu.fypimplbackend.exceptions.models.InvalidOTPCodeException
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.services.IFileStore
 import com.hu.fypimplbackend.services.IUserService
+import com.hu.fypimplbackend.utility.EmailSendService
 import com.hu.fypimplbackend.utility.MapperSingletons
+import com.hu.fypimplbackend.utility.generateString
 import org.apache.http.entity.ContentType.*
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +38,9 @@ class UserServiceImpl(
 
     @Autowired
     private val passwordEncoder: BCryptPasswordEncoder,
+
+    @Autowired
+    private val emailSendService: EmailSendService,
 
     @Autowired
     private val loggerFactory: Logger
@@ -111,8 +118,31 @@ class UserServiceImpl(
     @Throws(EntityNotFoundException::class)
     override fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User {
         val oldUserOptional = this.userRepository.getByUsername(username)
-        return this.userRepository.save(userMapper.convertToModel(updateUserDTO, oldUserOptional))
+        return this.userRepository.save(
+            userMapper.convertToModel(updateUserDTO, oldUserOptional)
+                .apply { password = passwordEncoder.encode(password) })
             .apply { password = null }
     }
 
+    @Throws(EntityNotFoundException::class)
+    override fun forgotPassword(username: String): HashMap<String, String> {
+        val user = this.userRepository.getByUsername(username)
+        val otpCode = generateString()
+        user.otpCode = otpCode
+        this.emailSendService.sendEmail(user.emailAddress!!, otpCode)
+        this.userRepository.save(user)
+        return hashMapOf(
+            "message" to "If your account exists, you've received an OTP code"
+        )
+    }
+
+    override fun updatePassword(username: String, forgotPasswordDTO: ForgotPasswordDTO): User {
+        val user = this.userRepository.getByUsername(username)
+        if (user.otpCode != forgotPasswordDTO.otpReceived) {
+            throw InvalidOTPCodeException()
+        }
+        user.otpCode = null
+        user.password = this.passwordEncoder.encode(forgotPasswordDTO.updatedPassword)
+        return this.userRepository.save(user).apply { password = null }
+    }
 }

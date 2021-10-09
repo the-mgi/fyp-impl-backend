@@ -2,6 +2,7 @@ package com.hu.fypimplbackend.exceptions
 
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO.Companion.getErrorObject
+import com.hu.fypimplbackend.exceptions.models.InvalidOTPCodeException
 import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,5 +51,25 @@ class RestResponseEntityExceptionHandler(
     ): ResponseEntity<ErrorResponseDTO> {
         loggerFactory.warn("NestedObjectDoesNotExistException occurred")
         return getErrorObject("Not found", nestedObjectDoesNotExistException.message!!, HttpStatus.NOT_FOUND.value())
+    }
+
+    @ExceptionHandler(RuntimeException::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleRuntimeException(
+        runtimeException: RuntimeException,
+        webRequest: WebRequest
+    ): ResponseEntity<ErrorResponseDTO> {
+        loggerFactory.warn("RuntimeException occurred")
+        return getErrorObject("Runtime Exception", runtimeException.message!!, HttpStatus.INTERNAL_SERVER_ERROR.value())
+    }
+
+    @ExceptionHandler(InvalidOTPCodeException::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun handleInvalidOTPCodeException(
+        invalidOTPCodeException: InvalidOTPCodeException,
+        webRequest: WebRequest
+    ) : ResponseEntity<ErrorResponseDTO> {
+        loggerFactory.warn("InvalidOTPCodeException occurred")
+        return getErrorObject("OTP Code Invalid", invalidOTPCodeException.message!!, HttpStatus.NOT_FOUND.value())
     }
 }

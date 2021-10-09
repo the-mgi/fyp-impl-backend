@@ -1,4 +1,4 @@
-package com.hu.fypimplbackend.utility;
+package com.hu.fypimplbackend.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import static java.util.Optional.ofNullable;
 
 @Configuration
-public class LoggingConfiguration {
+public class LoggingConfig {
     @Bean
     @Scope("prototype")
     public Logger logger(final InjectionPoint ip) {

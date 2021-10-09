@@ -1,7 +1,6 @@
 package com.hu.fypimplbackend.security
 
 import com.hu.fypimplbackend.security.filters.CustomAuthenticationFilter
-import com.hu.fypimplbackend.utility.JWTAuthenticationEntryPoint
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,10 +20,7 @@ class SecurityConfiguration(
     private val userDetailsService: UserDetailsService,
 
     @Autowired
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-
-    @Autowired
-    private val jwtAuthenticationEntryPoint: JWTAuthenticationEntryPoint
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
 
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(auth: AuthenticationManagerBuilder) {

@@ -12,5 +12,11 @@ import org.springframework.context.annotation.PropertySource
 @PropertySource("classpath:application.properties")
 data class ApplicationConfig(
     @Value("\${com.hu.app.jwt.secret-key}")
-    val jwtSecretKey: String
+    val jwtSecretKey: String,
+
+    @Value("\${com.hu.app.from-email}")
+    val fromEmail: String,
+
+    @Value("\${com.hu.app.from-password}")
+    val fromPassword: String
 )
