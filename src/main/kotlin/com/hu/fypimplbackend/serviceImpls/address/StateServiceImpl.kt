@@ -6,7 +6,8 @@ import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
 import com.hu.fypimplbackend.repositories.address.CountryRepository
 import com.hu.fypimplbackend.repositories.address.StateRepository
 import com.hu.fypimplbackend.services.address.IStateService
-import com.hu.fypimplbackend.utility.ObjectTransformationUtil
+import com.hu.fypimplbackend.utility.mappers.StateSaveStateDTOMapper
+import org.mapstruct.factory.Mappers
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
@@ -22,12 +23,12 @@ class StateServiceImpl(
     private val countryRepository: CountryRepository,
 
     @Autowired
-    private val objectTransformationUtil: ObjectTransformationUtil,
-
-    @Autowired
     private val loggerFactory: Logger
 
 ) : IStateService {
+    private val stateSaveStateDTOMapper: StateSaveStateDTOMapper =
+        Mappers.getMapper(StateSaveStateDTOMapper::class.java)
+
     @Throws(DataIntegrityViolationException::class, NestedObjectDoesNotExistException::class)
     override fun saveState(saveStateDTO: SaveStateDTO): State {
         loggerFactory.info("saveState in StateServiceImpl")
@@ -35,7 +36,7 @@ class StateServiceImpl(
         return if (!country.isPresent) {
             throw NestedObjectDoesNotExistException("Country with ID ${saveStateDTO.countryId} does not exist")
         } else {
-            val state = this.objectTransformationUtil.getStateFromSaveStateDTO(saveStateDTO)
+            val state = this.stateSaveStateDTOMapper.convertToModel(saveStateDTO)
             state.country = country.get()
             this.stateRepository.save(state)
         }

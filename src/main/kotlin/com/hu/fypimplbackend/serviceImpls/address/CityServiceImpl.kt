@@ -7,7 +7,8 @@ import com.hu.fypimplbackend.repositories.address.CityRepository
 import com.hu.fypimplbackend.repositories.address.CountryRepository
 import com.hu.fypimplbackend.repositories.address.StateRepository
 import com.hu.fypimplbackend.services.address.ICityService
-import com.hu.fypimplbackend.utility.ObjectTransformationUtil
+import com.hu.fypimplbackend.utility.mappers.CitySaveCityDTOMapper
+import org.mapstruct.factory.Mappers
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
@@ -26,12 +27,10 @@ class CityServiceImpl(
     private val countryRepository: CountryRepository,
 
     @Autowired
-    private val objectTransformationUtil: ObjectTransformationUtil,
+    private val loggerFactory: Logger
 
-    @Autowired
-    private val loggerFactory: Logger,
-
-    ) : ICityService {
+) : ICityService {
+    private val citySaveCityDTOMapper: CitySaveCityDTOMapper = Mappers.getMapper(CitySaveCityDTOMapper::class.java)
 
     @Throws(DataIntegrityViolationException::class, NestedObjectDoesNotExistException::class)
     override fun saveCity(saveCityDTO: SaveCityDTO): City {
@@ -43,7 +42,7 @@ class CityServiceImpl(
         } else if (!state.isPresent) {
             throw NestedObjectDoesNotExistException("State with ID ${saveCityDTO.stateId} does not exist")
         } else {
-            val city = this.objectTransformationUtil.getCityFromSaveCityDTO(saveCityDTO)
+            val city = this.citySaveCityDTOMapper.convertToModel(saveCityDTO)
             city.country = country.get()
             city.state = state.get()
             this.cityRepository.save(city)

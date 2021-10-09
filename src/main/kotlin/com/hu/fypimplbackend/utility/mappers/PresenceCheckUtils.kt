@@ -4,7 +4,10 @@ import org.mapstruct.Condition
 
 object PresenceCheckUtils {
     @Condition
-    fun isNotEmpty(value: String?): Boolean {
-        return value != null && value.isNotEmpty()
+    fun isNotEmpty(value: Any?): Boolean {
+        return value != null && when (value) {
+            is String -> value.length > 0
+            else -> true
+        }
     }
 }
