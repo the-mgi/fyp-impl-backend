@@ -89,35 +89,29 @@ class UserServiceImpl(
         }
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun downloadImage(username: String): ByteArray {
-        val user = this.userRepository.findByUsername(username)
-        if (user.isPresent) {
-            return this.iFileStore.download(user.get().imagePath!!, user.get().imageFileName!!)
-        }
-        return ByteArray(0)
+        val user = this.userRepository.getByUsername(username)
+        return this.iFileStore.download(user.imagePath!!, user.imageFileName!!)
+
     }
 
-    @Throws(UsernameNotFoundException::class)
+    @Throws(UsernameNotFoundException::class, EntityNotFoundException::class)
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = this.userRepository.findByUsername(username)
-        this.loggerFactory.info("loadUserByUsername in UserService: ${user.isPresent}")
-        if (user.isPresent) {
-            val authorities: MutableList<SimpleGrantedAuthority> = ArrayList()
-            user.get().roles.forEach { authorities.add(SimpleGrantedAuthority(it.roleName?.name)) }
-            return org.springframework.security.core.userdetails.User(
-                user.get().username,
-                user.get().password,
-                authorities
-            )
-        }
-        throw UsernameNotFoundException("Username not found")
+        val user = this.userRepository.getByUsername(username)
+        val authorities: MutableList<SimpleGrantedAuthority> = ArrayList()
+        user.roles.forEach { authorities.add(SimpleGrantedAuthority(it.roleName?.name)) }
+        return org.springframework.security.core.userdetails.User(
+            user.username,
+            user.password,
+            authorities
+        )
     }
 
     @Throws(EntityNotFoundException::class)
     override fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User {
         val oldUserOptional = this.userRepository.getByUsername(username)
-        return this.userRepository.save(
-            userMapper.convertToModel(updateUserDTO, oldUserOptional).apply { id = oldUserOptional.id })
+        return this.userRepository.save(userMapper.convertToModel(updateUserDTO, oldUserOptional))
             .apply { password = null }
     }
 
