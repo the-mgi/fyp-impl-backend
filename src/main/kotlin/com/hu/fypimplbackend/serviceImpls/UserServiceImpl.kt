@@ -11,6 +11,7 @@ import com.hu.fypimplbackend.services.IUserService
 import com.hu.fypimplbackend.utility.EmailSendService
 import com.hu.fypimplbackend.utility.MapperSingletons
 import com.hu.fypimplbackend.utility.generateString
+import kotlinx.coroutines.*
 import org.apache.http.entity.ContentType.*
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
@@ -129,8 +130,11 @@ class UserServiceImpl(
         val user = this.userRepository.getByUsername(username)
         val otpCode = generateString()
         user.otpCode = otpCode
-        this.emailSendService.sendEmail(user.emailAddress!!, otpCode)
-        this.userRepository.save(user)
+        GlobalScope.launch(Dispatchers.IO) {
+            val job = async { emailSendService.sendEmail(user.emailAddress!!, otpCode) }
+            job.await()
+            userRepository.save(user)
+        }
         return hashMapOf(
             "message" to "If your account exists, you've received an OTP code"
         )

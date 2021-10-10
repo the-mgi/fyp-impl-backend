@@ -19,7 +19,7 @@ class EmailSendService(
 ) {
 
     @Throws(RuntimeException::class)
-    fun sendEmail(to: String, otpCode: String) {
+    suspend fun sendEmail(to: String, otpCode: String) {
         val properties = Properties()
         properties["mail.smtp.host"] = "smtp.gmail.com" // smtp protocol required to communicate with the gmail server
         properties["mail.smtp.socketFactory.port"] = "465"
