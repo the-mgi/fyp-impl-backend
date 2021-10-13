@@ -149,4 +149,10 @@ class UserServiceImpl(
         user.password = this.passwordEncoder.encode(forgotPasswordDTO.updatedPassword)
         return this.userRepository.save(user).apply { password = null }
     }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getUserByUserId(userId: Long): User {
+        this.loggerFactory.info("getUser in UserService")
+        return this.userRepository.getById(userId)
+    }
 }

@@ -50,6 +50,11 @@ class UserController(
         return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK.value())
     }
 
+    @GetMapping("/userId/{userId}")
+    fun getUserByUserId(@PathVariable("userId") userId: Long): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.getUserByUserId(userId), HttpStatus.OK.value())
+    }
+
     @PatchMapping("/forgot-password/{username}")
     fun forgotPassword(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
         return getSuccessObject(this.iUserService.forgotPassword(username), HttpStatus.OK.value())

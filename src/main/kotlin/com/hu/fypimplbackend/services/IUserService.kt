@@ -15,4 +15,5 @@ interface IUserService : UserDetailsService {
     fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User
     fun forgotPassword(username: String): HashMap<String, String>
     fun updatePassword(username: String, forgotPasswordDTO: ForgotPasswordDTO): User
+    fun getUserByUserId(userId: Long): User
 }
