@@ -55,6 +55,11 @@ class UserController(
         return getSuccessObject(this.iUserService.getUserByUserId(userId), HttpStatus.OK.value())
     }
 
+    @GetMapping("/bulk-user-data")
+    fun getBulkUserData(@RequestBody userIds: List<Long>) : ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.getBulkUserData(userIds), HttpStatus.OK.value())
+    }
+
     @PatchMapping("/forgot-password/{username}")
     fun forgotPassword(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
         return getSuccessObject(this.iUserService.forgotPassword(username), HttpStatus.OK.value())

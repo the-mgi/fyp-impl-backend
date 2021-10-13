@@ -155,4 +155,9 @@ class UserServiceImpl(
         this.loggerFactory.info("getUser in UserService")
         return this.userRepository.getById(userId)
     }
+
+    override fun getBulkUserData(userIds: List<Long>): List<User> {
+        this.loggerFactory.info("getBulkUserData in UserService")
+        return this.userRepository.findAllById(userIds)
+    }
 }
