@@ -50,9 +50,10 @@ class UserController(
         return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK.value())
     }
 
-    @GetMapping("/userId/{userId}")
-    fun getUserByUserId(@PathVariable("userId") userId: Long): ResponseEntity<BaseResponse> {
-        return getSuccessObject(this.iUserService.getUserByUserId(userId), HttpStatus.OK.value())
+    @GetMapping("/userId/{change}")
+    fun getUserByUserId(@PathVariable("change") change: Long): ResponseEntity<BaseResponse> {
+        loggerFactory.info("getUserByUserId in UserController: $change")
+        return getSuccessObject(this.iUserService.getUserByUserId(change), HttpStatus.OK.value())
     }
 
     @GetMapping("/bulk-user-data")
