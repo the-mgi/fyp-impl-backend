@@ -2,6 +2,7 @@ package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.response.BaseResponse
+import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
 import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
@@ -12,12 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 
 @RestController
 @RequestMapping("/user")
 class UserController(
     @Autowired
     private val iUserService: IUserService,
+
+    @Autowired
+    private val restTemplate: RestTemplate,
 
     @Autowired
     private val loggerFactory: Logger
@@ -72,5 +77,14 @@ class UserController(
         @RequestBody forgotPasswordDTO: ForgotPasswordDTO
     ): ResponseEntity<BaseResponse> {
         return getSuccessObject(this.iUserService.updatePassword(username, forgotPasswordDTO), HttpStatus.OK.value())
+    }
+
+    @GetMapping("/is-service-up")
+    fun isServiceUp(): ResponseEntity<BaseResponse> {
+        loggerFactory.info("isServiceUp without value")
+        val value = this.restTemplate.getForObject("http://localhost:8081/team-games-management-service/team/is-service-up", SuccessResponseDTO::class.java)
+        loggerFactory.info("isServiceUp in UserController: $value")
+
+        return getSuccessObject("yes this service is up", HttpStatus.OK.value())
     }
 }
