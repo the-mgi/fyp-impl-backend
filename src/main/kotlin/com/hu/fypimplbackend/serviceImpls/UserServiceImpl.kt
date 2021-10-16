@@ -1,18 +1,18 @@
 package com.hu.fypimplbackend.serviceImpls
 
-import com.hu.fypimplbackend.config.AWSApplicationConfig
 import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.exceptions.models.InvalidOTPCodeException
 import com.hu.fypimplbackend.repositories.UserRepository
-import com.hu.fypimplbackend.services.IFileStore
 import com.hu.fypimplbackend.services.IUserService
 import com.hu.fypimplbackend.utility.EmailSendService
 import com.hu.fypimplbackend.utility.MapperSingletons
 import com.hu.fypimplbackend.utility.generateString
-import kotlinx.coroutines.*
-import org.apache.http.entity.ContentType.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
@@ -22,18 +22,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.io.IOException
-import java.util.*
 import javax.persistence.EntityNotFoundException
 
 @Service
 class UserServiceImpl(
-    @Autowired
-    private val iFileStore: IFileStore,
-
-    @Autowired
-    private val awsApplicationConfig: AWSApplicationConfig,
-
     @Autowired
     private val userRepository: UserRepository,
 
@@ -67,41 +59,12 @@ class UserServiceImpl(
     }
 
     override fun updateProfileImage(username: String, multipartFile: MultipartFile): Pair<String, String> {
-        if (multipartFile.isEmpty) {
-            throw IllegalStateException("Cannot upload empty file")
-        }
-        if (!listOf(
-                IMAGE_PNG.mimeType,
-                IMAGE_BMP.mimeType,
-                IMAGE_GIF.mimeType,
-                IMAGE_JPEG.mimeType
-            ).contains(multipartFile.contentType)
-        ) {
-            throw IllegalStateException("FIle uploaded is not an image")
-        }
-
-        // getting the file metadata
-        val fileMetadata = hashMapOf(
-            "Content-Type" to multipartFile.contentType!!,
-            "Content-Length" to multipartFile.size.toString()
-        )
-        val path = "${this.awsApplicationConfig.profileImageBucket}/${UUID.randomUUID()}"
-        val fileName = multipartFile.originalFilename!!
-
-        try {
-            this.iFileStore.upload(path, fileName, Optional.of(fileMetadata), multipartFile.inputStream)
-            loggerFactory.info("Image uploaded successfully")
-            return Pair(path, fileName)
-        } catch (e: IOException) {
-            throw IllegalStateException("Failed to upload file", e)
-        }
+        TODO("Not yet implemented")
     }
 
     @Throws(EntityNotFoundException::class)
     override fun downloadImage(username: String): ByteArray {
-        val user = this.userRepository.getByUsername(username)
-        return this.iFileStore.download(user.imagePath!!, user.imageFileName!!)
-
+        TODO("Not yet implemented")
     }
 
     @Throws(UsernameNotFoundException::class, EntityNotFoundException::class)
