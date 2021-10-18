@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup deployment
+        run: |
+          mvn clean
+          mvn instll
+          mvn compile
+          git add target -f
+          git commit -m "build spring project"
+          git push
