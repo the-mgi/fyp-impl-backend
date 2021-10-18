@@ -11,9 +11,9 @@ jobs:
     steps:
       - name: setup deployment
         run: |
-          mvn clean
-          mvn instll
-          mvn compile
+          cd ../../ mvn clean
+          cd ../../ mvn instll
+          cd ../../ mvn compile
           git add target -f
           git commit -m "build spring project"
           git push
