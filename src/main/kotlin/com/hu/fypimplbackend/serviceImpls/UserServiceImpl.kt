@@ -116,7 +116,7 @@ class UserServiceImpl(
     @Throws(EntityNotFoundException::class)
     override fun getUserByUserId(userId: Long): User {
         this.loggerFactory.info("getUser in UserService")
-        return this.userRepository.getById(userId)
+        return this.userRepository.getById(userId).apply { password = null }
     }
 
     override fun getBulkUserData(userIds: List<Long>): List<User> {
