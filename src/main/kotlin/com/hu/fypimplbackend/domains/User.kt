@@ -16,6 +16,10 @@ class User(
     var firstName: String? = null,
 
     var lastName: String? = null,
+
+    @Pattern(
+        regexp = """^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,20}$"""
+    )
     var password: String? = null,
 
     @Column(unique = true, nullable = false)
@@ -23,7 +27,7 @@ class User(
 
     @Column(unique = true, nullable = false)
     @Pattern(
-        regexp = "^([a-z0-9.-]+)@([a-z0-9-]+)\\.([a-z]{2,8})(\\.[a-z]{2,8})?\$",
+        regexp = """^([a-z0-9.-]+)@([a-z0-9-]+)\\.([a-z]{2,8})(\\.[a-z]{2,8})?\$""",
     )
     var emailAddress: String? = null,
 
