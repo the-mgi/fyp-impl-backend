@@ -1,7 +1,7 @@
 package com.hu.fypimplbackend.utility.mappers
 
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.user.UpdateUserDTO
+import com.hu.fypimplbackend.dto.UpdateUserDTO
 import org.mapstruct.*
 
 @Mapper(uses = [PresenceCheckUtils::class])

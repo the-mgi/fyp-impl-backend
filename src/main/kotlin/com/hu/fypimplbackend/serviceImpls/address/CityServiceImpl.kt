@@ -1,8 +1,8 @@
 package com.hu.fypimplbackend.serviceImpls.address
 
 import com.hu.fypimplbackend.domains.City
-import com.hu.fypimplbackend.dto.address.SaveCityDTO
-import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
+import com.hu.fypimplbackend.dto.SaveCityDTO
+import com.hu.fypimplbackend.exceptions.NestedObjectDoesNotExistException
 import com.hu.fypimplbackend.repositories.address.CityRepository
 import com.hu.fypimplbackend.repositories.address.CountryRepository
 import com.hu.fypimplbackend.repositories.address.StateRepository

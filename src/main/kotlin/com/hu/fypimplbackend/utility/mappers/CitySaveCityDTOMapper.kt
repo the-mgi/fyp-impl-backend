@@ -1,8 +1,11 @@
 package com.hu.fypimplbackend.utility.mappers
 
 import com.hu.fypimplbackend.domains.City
-import com.hu.fypimplbackend.dto.address.SaveCityDTO
-import org.mapstruct.*
+import com.hu.fypimplbackend.dto.SaveCityDTO
+import org.mapstruct.BeanMapping
+import org.mapstruct.Mapper
+import org.mapstruct.NullValueCheckStrategy
+import org.mapstruct.NullValuePropertyMappingStrategy
 
 @Mapper(uses = [PresenceCheckUtils::class])
 interface CitySaveCityDTOMapper {

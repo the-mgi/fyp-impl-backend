@@ -1,8 +1,8 @@
 package com.hu.fypimplbackend.services
 
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
-import com.hu.fypimplbackend.dto.user.UpdateUserDTO
+import com.hu.fypimplbackend.dto.ForgotPasswordDTO
+import com.hu.fypimplbackend.dto.UpdateUserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.multipart.MultipartFile
 

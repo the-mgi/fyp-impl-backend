@@ -4,7 +4,6 @@ import com.hu.fypimplbackend.domains.Role
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
-import com.hu.fypimplbackend.enums.RoleTypes
 import com.hu.fypimplbackend.services.IRoleService
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired

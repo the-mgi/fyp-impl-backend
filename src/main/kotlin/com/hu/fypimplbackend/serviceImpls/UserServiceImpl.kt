@@ -1,9 +1,9 @@
 package com.hu.fypimplbackend.serviceImpls
 
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
-import com.hu.fypimplbackend.dto.user.UpdateUserDTO
-import com.hu.fypimplbackend.exceptions.models.InvalidOTPCodeException
+import com.hu.fypimplbackend.dto.ForgotPasswordDTO
+import com.hu.fypimplbackend.dto.UpdateUserDTO
+import com.hu.fypimplbackend.exceptions.InvalidOTPCodeException
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.services.IUserService
 import com.hu.fypimplbackend.utility.EmailSendService

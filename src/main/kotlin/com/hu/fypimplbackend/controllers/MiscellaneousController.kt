@@ -1,8 +1,8 @@
 package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.Country
-import com.hu.fypimplbackend.dto.address.SaveCityDTO
-import com.hu.fypimplbackend.dto.address.SaveStateDTO
+import com.hu.fypimplbackend.dto.SaveCityDTO
+import com.hu.fypimplbackend.dto.SaveStateDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
 import com.hu.fypimplbackend.services.address.ICityService

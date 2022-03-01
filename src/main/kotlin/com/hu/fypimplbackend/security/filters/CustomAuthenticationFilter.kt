@@ -1,11 +1,9 @@
 package com.hu.fypimplbackend.security.filters
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
+import com.hu.fypimplbackend.dto.EmailPasswordDTO
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
-import com.hu.fypimplbackend.dto.user.Tokens
-import com.hu.fypimplbackend.dto.user.UsernameAndPasswordDTO
+import com.hu.fypimplbackend.security.JwtUtil
 import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,7 +15,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
-import java.util.*
 import java.util.stream.Collectors
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -25,25 +22,26 @@ import javax.servlet.http.HttpServletResponse
 import org.springframework.security.core.userdetails.User as SpringSecurityUser
 
 class CustomAuthenticationFilter(
-    private val authenticationManagerSpring: AuthenticationManager
+    private val authenticationManagerSpring: AuthenticationManager,
+    private val jwtUtil: JwtUtil
 
 ) : UsernamePasswordAuthenticationFilter() {
     private val objectMapper = ObjectMapperSingleton.objectMapper
     private val loggerFactory: Logger = LoggerFactory.getLogger(CustomAuthenticationFilter::class.java)
 
     @Throws(IOException::class)
-    private fun getUserNameAndPassword(request: HttpServletRequest): UsernameAndPasswordDTO {
+    private fun getUserNameAndPassword(request: HttpServletRequest): EmailPasswordDTO {
         val body = request.reader.lines().collect(Collectors.joining())
-        return objectMapper.readValue(body, UsernameAndPasswordDTO::class.java)
+        return objectMapper.readValue(body, EmailPasswordDTO::class.java)
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val usernameAndPassword: UsernameAndPasswordDTO = getUserNameAndPassword(request)
-        val username = usernameAndPassword.username
+        val usernameAndPassword: EmailPasswordDTO = getUserNameAndPassword(request)
+        val emailAddress = usernameAndPassword.emailAddress
         val password = usernameAndPassword.password
 
-        loggerFactory.info("username: $username and password: $password")
-        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(username, password)
+        loggerFactory.info("emailAddress: $emailAddress and password: $password")
+        val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(emailAddress, password)
         return this.authenticationManagerSpring.authenticate(usernamePasswordAuthenticationToken)
     }
 
@@ -54,21 +52,7 @@ class CustomAuthenticationFilter(
         authResult: Authentication
     ) {
         val user: SpringSecurityUser = authResult.principal as SpringSecurityUser
-        val algorithm = Algorithm.HMAC256("secret".toByteArray())
-        val accessToken = JWT.create()
-            .withSubject(user.username)
-            .withExpiresAt(Date(System.currentTimeMillis() + (10 * 60 * 1000)))
-            .withIssuer(request.requestURL.toString())
-            .withClaim("roles", user.authorities.map { it.authority })
-            .sign(algorithm)
-
-        val refreshToken = JWT.create()
-            .withSubject(user.username)
-            .withExpiresAt(Date(System.currentTimeMillis() + (SEVEN_DAYS_VALIDITY)))
-            .withIssuer(request.requestURL.toString())
-            .sign(algorithm)
-
-        val tokens = Tokens(accessToken, refreshToken)
+        val tokens = this.jwtUtil.createTokenDTO(user, request)
         response.contentType = APPLICATION_JSON_VALUE
         this.objectMapper.writeValue(response.outputStream, SuccessResponseDTO(tokens, HttpStatus.OK.value()))
     }
@@ -79,13 +63,10 @@ class CustomAuthenticationFilter(
         authenticationException: AuthenticationException
     ) {
         response.contentType = APPLICATION_JSON_VALUE
+        response.status = HttpStatus.FORBIDDEN.value()
         this.objectMapper.writeValue(
             response.outputStream,
-            ErrorResponseDTO("Username password combination does not exist", "Forbidden", HttpStatus.FORBIDDEN.value())
+            ErrorResponseDTO("Email and password combination does not exist", "Forbidden", HttpStatus.FORBIDDEN.value())
         )
-    }
-
-    companion object {
-        private const val SEVEN_DAYS_VALIDITY = 7 * 24 * 60 * 60 * 1000
     }
 }

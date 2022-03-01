@@ -1,13 +1,14 @@
 package com.hu.fypimplbackend.controllers
 
 import com.hu.fypimplbackend.domains.User
+import com.hu.fypimplbackend.dto.ForgotPasswordDTO
+import com.hu.fypimplbackend.dto.UpdateUserDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
-import com.hu.fypimplbackend.dto.user.ForgotPasswordDTO
-import com.hu.fypimplbackend.dto.user.UpdateUserDTO
 import com.hu.fypimplbackend.services.IUserService
+import com.hu.fypimplbackend.utility.USER_ROUTE
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(USER_ROUTE)
 class UserController(
     @Autowired
     private val iUserService: IUserService,

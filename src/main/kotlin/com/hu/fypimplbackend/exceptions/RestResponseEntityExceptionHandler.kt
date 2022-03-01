@@ -2,8 +2,6 @@ package com.hu.fypimplbackend.exceptions
 
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO.Companion.getErrorObject
-import com.hu.fypimplbackend.exceptions.models.InvalidOTPCodeException
-import com.hu.fypimplbackend.exceptions.models.NestedObjectDoesNotExistException
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException

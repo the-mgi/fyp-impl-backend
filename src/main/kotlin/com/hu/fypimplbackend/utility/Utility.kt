@@ -1,5 +1,11 @@
 package com.hu.fypimplbackend.utility
 
+const val USER_ROUTE = "/user"
+
+val OPEN_ROUTES = arrayOf(
+    "$USER_ROUTE/login",
+)
+
 const val DIGIT_START = 48
 const val UPPERCASE_START = 65
 const val LOWER_CASE_START = 97
