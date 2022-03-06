@@ -31,7 +31,7 @@ class User(
     )
     var emailAddress: String? = null,
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     var phoneNumber: String? = null,
 
     @OneToOne(cascade = [CascadeType.ALL])

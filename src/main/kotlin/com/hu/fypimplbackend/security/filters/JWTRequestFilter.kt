@@ -1,7 +1,7 @@
 package com.hu.fypimplbackend.security.filters
 
-import com.hu.fypimplbackend.security.JwtUtil
 import com.hu.fypimplbackend.dto.response.ErrorResponseDTO
+import com.hu.fypimplbackend.security.JwtUtil
 import com.hu.fypimplbackend.utility.OPEN_ROUTES
 import com.hu.fypimplbackend.utility.ObjectMapperSingleton
 import org.apache.http.HttpHeaders
@@ -53,6 +53,7 @@ class JWTRequestFilter(
             } catch (exception: Exception) {
                 this.loggerFactory.error("doFilerInternal in JWTRequestFilter")
                 response.contentType = APPLICATION_JSON_VALUE
+                response.status = HttpStatus.FORBIDDEN.value()
                 this.objectMapper.writeValue(
                     response.outputStream, ErrorResponseDTO(
                         "Access Forbidden",
@@ -63,6 +64,7 @@ class JWTRequestFilter(
             }
         } else {
             response.contentType = APPLICATION_JSON_VALUE
+            response.status = HttpStatus.FORBIDDEN.value()
             this.objectMapper.writeValue(
                 response.outputStream, ErrorResponseDTO(
                     "Access Forbidden",

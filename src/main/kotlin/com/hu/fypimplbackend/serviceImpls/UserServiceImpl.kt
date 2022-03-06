@@ -103,8 +103,8 @@ class UserServiceImpl(
         )
     }
 
-    override fun updatePassword(username: String, forgotPasswordDTO: ForgotPasswordDTO): User {
-        val user = this.userRepository.getByUsername(username)
+    override fun updatePassword(forgotPasswordDTO: ForgotPasswordDTO): User {
+        val user = this.userRepository.getByUsername(forgotPasswordDTO.username)
         if (user.otpCode != forgotPasswordDTO.otpReceived) {
             throw InvalidOTPCodeException()
         }

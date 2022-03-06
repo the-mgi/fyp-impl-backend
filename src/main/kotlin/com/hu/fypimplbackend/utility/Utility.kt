@@ -4,6 +4,9 @@ const val USER_ROUTE = "/user"
 
 val OPEN_ROUTES = arrayOf(
     "$USER_ROUTE/login",
+    "$USER_ROUTE/save",
+    "$USER_ROUTE/forgot-password",
+    "$USER_ROUTE/update-password",
 )
 
 const val DIGIT_START = 48

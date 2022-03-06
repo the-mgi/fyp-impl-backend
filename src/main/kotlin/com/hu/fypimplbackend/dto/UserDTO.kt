@@ -8,25 +8,9 @@ data class EmailPasswordDTO(
 )
 
 data class ForgotPasswordDTO(
+    val username: String,
     val updatedPassword: String,
     val otpReceived: String
-)
-
-data class SignUpUserDTO(
-    var firstName: String,
-    var lastName: String,
-    var password: String,
-    var username: String,
-    var emailAddress: String,
-    var phoneNumber: String,
-    var address: AddressDTO,
-    var gender: String,
-    var roles: List<Long>
-)
-
-data class Tokens(
-    val accessToken: String,
-    val refreshToken: String
 )
 
 data class TokensDTO(
@@ -44,7 +28,6 @@ data class UpdateUserDTO(
     val imageFileName: String? = null
 )
 
-data class UsernameAndPasswordDTO(
-    val username: String? = null,
-    val password: String? = null
+data class UsernameDTO(
+    val username: String? = null
 )

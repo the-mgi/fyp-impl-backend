@@ -40,7 +40,7 @@ class SecurityConfigurer(
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
         http.csrf().disable()
-            .authorizeRequests().antMatchers(*OPEN_ROUTES).permitAll()
+            .authorizeRequests().antMatchers(*OPEN_ROUTES, "/user/forgot-password/*").permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -61,7 +61,7 @@ class SecurityConfigurer(
     fun corsConfigurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("*")
-        configuration.allowedMethods = listOf("GET", "POST")
+        configuration.allowedMethods = listOf("GET", "POST", "PATCH", "PUT", "DELETE")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source

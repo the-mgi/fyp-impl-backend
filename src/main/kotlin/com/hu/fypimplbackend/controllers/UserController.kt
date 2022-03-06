@@ -3,6 +3,7 @@ package com.hu.fypimplbackend.controllers
 import com.hu.fypimplbackend.domains.User
 import com.hu.fypimplbackend.dto.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.UpdateUserDTO
+import com.hu.fypimplbackend.dto.UsernameDTO
 import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
@@ -67,17 +68,16 @@ class UserController(
         return getSuccessObject(this.iUserService.getBulkUserData(userIds), HttpStatus.OK.value())
     }
 
-    @PatchMapping("/forgot-password/{username}")
-    fun forgotPassword(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
-        return getSuccessObject(this.iUserService.forgotPassword(username), HttpStatus.OK.value())
+    @PostMapping("/forgot-password")
+    fun forgotPassword(@RequestBody usernameDTO: UsernameDTO): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.forgotPassword(usernameDTO.username!!), HttpStatus.OK.value())
     }
 
-    @PatchMapping("/update-password/{username}")
+    @PostMapping("/update-password")
     fun updatePassword(
-        @PathVariable("username") username: String,
         @RequestBody forgotPasswordDTO: ForgotPasswordDTO
     ): ResponseEntity<BaseResponse> {
-        return getSuccessObject(this.iUserService.updatePassword(username, forgotPasswordDTO), HttpStatus.OK.value())
+        return getSuccessObject(this.iUserService.updatePassword(forgotPasswordDTO), HttpStatus.OK.value())
     }
 
     @GetMapping("/is-service-up")

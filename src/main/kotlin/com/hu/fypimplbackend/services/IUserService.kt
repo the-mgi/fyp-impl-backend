@@ -14,7 +14,7 @@ interface IUserService : UserDetailsService {
     fun downloadImage(username: String): ByteArray
     fun updateUser(username: String, updateUserDTO: UpdateUserDTO): User
     fun forgotPassword(username: String): HashMap<String, String>
-    fun updatePassword(username: String, forgotPasswordDTO: ForgotPasswordDTO): User
+    fun updatePassword(forgotPasswordDTO: ForgotPasswordDTO): User
     fun getUserByUserId(userId: Long): User
     fun getBulkUserData(userIds: List<Long>): List<User>
 }
