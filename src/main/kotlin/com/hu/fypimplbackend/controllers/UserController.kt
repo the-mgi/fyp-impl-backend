@@ -8,6 +8,8 @@ import com.hu.fypimplbackend.dto.response.BaseResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getDeleteResponse
 import com.hu.fypimplbackend.dto.response.SuccessResponseDTO.Companion.getSuccessObject
+import com.hu.fypimplbackend.security.JWTDecodedData
+import com.hu.fypimplbackend.security.JwtUtil
 import com.hu.fypimplbackend.services.IUserService
 import com.hu.fypimplbackend.utility.USER_ROUTE
 import org.slf4j.Logger
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
+import javax.servlet.http.HttpServletRequest
 
 @RestController
 @RequestMapping(USER_ROUTE)
@@ -52,9 +55,9 @@ class UserController(
         return getDeleteResponse()
     }
 
-    @GetMapping("/{username}")
-    fun getUser(@PathVariable("username") username: String): ResponseEntity<BaseResponse> {
-        return getSuccessObject(this.iUserService.getUser(username), HttpStatus.OK.value())
+    @GetMapping
+    fun getUser(httpServletRequest: HttpServletRequest): ResponseEntity<BaseResponse> {
+        return getSuccessObject(this.iUserService.getUser(httpServletRequest), HttpStatus.OK.value())
     }
 
     @GetMapping("/userId/{change}")

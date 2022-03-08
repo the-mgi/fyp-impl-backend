@@ -5,10 +5,11 @@ import com.hu.fypimplbackend.dto.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.UpdateUserDTO
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.multipart.MultipartFile
+import javax.servlet.http.HttpServletRequest
 
 interface IUserService : UserDetailsService {
     fun saveUser(user: User): User
-    fun getUser(username: String): User
+    fun getUser(httpServletRequest: HttpServletRequest): User
     fun deleteUser(username: String)
     fun updateProfileImage(username: String, multipartFile: MultipartFile): Pair<String, String>
     fun downloadImage(username: String): ByteArray

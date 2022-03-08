@@ -55,7 +55,7 @@ class JwtUtil(
             val tokenString = completeHeaderString.substringAfter("Bearer ")
             try {
                 val decodedJWT = jwtVerifier.verify(tokenString)
-                JWTDecodedData(
+                return JWTDecodedData(
                     tokenString,
                     decodedJWT.subject,
                     decodedJWT.getClaim("roles").asArray(String::class.java),
@@ -79,6 +79,7 @@ class JwtUtil(
     fun createTokenDTO(user: SpringSecurityUser, request: HttpServletRequest): TokensDTO {
         val accessToken = JWT.create()
             .withSubject(user.username)
+            .withIssuedAt(Date(System.currentTimeMillis()))
             .withExpiresAt(Date(System.currentTimeMillis() + (A_DAY_VALIDITY)))
             .withIssuer(request.requestURL.toString())
             .withClaim("roles", user.authorities.map { it.authority })
@@ -87,6 +88,7 @@ class JwtUtil(
         val refreshToken = JWT.create()
             .withSubject(user.username)
             .withExpiresAt(Date(System.currentTimeMillis() + (SEVEN_DAYS_VALIDITY)))
+            .withIssuedAt(Date(System.currentTimeMillis()))
             .withIssuer(request.requestURL.toString())
             .sign(algorithm)
         return TokensDTO(accessToken, refreshToken)

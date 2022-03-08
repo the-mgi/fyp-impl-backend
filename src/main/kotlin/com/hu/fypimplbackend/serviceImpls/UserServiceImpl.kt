@@ -5,6 +5,8 @@ import com.hu.fypimplbackend.dto.ForgotPasswordDTO
 import com.hu.fypimplbackend.dto.UpdateUserDTO
 import com.hu.fypimplbackend.exceptions.InvalidOTPCodeException
 import com.hu.fypimplbackend.repositories.UserRepository
+import com.hu.fypimplbackend.security.JWTDecodedData
+import com.hu.fypimplbackend.security.JwtUtil
 import com.hu.fypimplbackend.services.IUserService
 import com.hu.fypimplbackend.utility.EmailSendService
 import com.hu.fypimplbackend.utility.MapperSingletons
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import javax.persistence.EntityNotFoundException
+import javax.servlet.http.HttpServletRequest
 
 @Service
 class UserServiceImpl(
@@ -34,6 +37,9 @@ class UserServiceImpl(
 
     @Autowired
     private val emailSendService: EmailSendService,
+
+    @Autowired
+    private val jwtUtil: JwtUtil,
 
     @Autowired
     private val loggerFactory: Logger
@@ -49,9 +55,10 @@ class UserServiceImpl(
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun getUser(username: String): User {
+    override fun getUser(httpServletRequest: HttpServletRequest): User {
         this.loggerFactory.info("getUser in UserService")
-        return this.userRepository.getByUsername(username)
+        val jwtDecodedData: JWTDecodedData = this.jwtUtil.getDecodedToken(httpServletRequest)!!
+        return this.userRepository.getByUsername(jwtDecodedData.subject).apply { password = null }
     }
 
     override fun deleteUser(username: String) {
