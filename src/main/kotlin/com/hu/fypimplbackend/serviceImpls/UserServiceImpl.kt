@@ -1,9 +1,14 @@
 package com.hu.fypimplbackend.serviceImpls
 
+import com.hu.fypimplbackend.domains.Friends
+import com.hu.fypimplbackend.domains.Role
 import com.hu.fypimplbackend.domains.User
-import com.hu.fypimplbackend.dto.ForgotPasswordDTO
-import com.hu.fypimplbackend.dto.UpdateUserDTO
+import com.hu.fypimplbackend.dto.*
+import com.hu.fypimplbackend.enums.RequestStatusType
+import com.hu.fypimplbackend.enums.RoleTypes
 import com.hu.fypimplbackend.exceptions.InvalidOTPCodeException
+import com.hu.fypimplbackend.exceptions.ResourceAccessForbidden
+import com.hu.fypimplbackend.repositories.FriendsRepository
 import com.hu.fypimplbackend.repositories.UserRepository
 import com.hu.fypimplbackend.security.JWTDecodedData
 import com.hu.fypimplbackend.security.JwtUtil
@@ -18,11 +23,18 @@ import kotlinx.coroutines.launch
 import org.slf4j.Logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.multipart.MultipartFile
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.HttpServletRequest
@@ -42,6 +54,12 @@ class UserServiceImpl(
     private val jwtUtil: JwtUtil,
 
     @Autowired
+    private val friendsRepository: FriendsRepository,
+
+    @Autowired
+    private val restTemplate: RestTemplate,
+
+    @Autowired
     private val loggerFactory: Logger
 
 ) : IUserService {
@@ -51,6 +69,7 @@ class UserServiceImpl(
     override fun saveUser(user: User): User {
         this.loggerFactory.info("saveUser in UserService")
         user.password = this.passwordEncoder.encode(user.password)
+        user.roles.add(Role(id = 1, roleName = RoleTypes.PLAYER))
         return userRepository.save(user).apply { password = null }
     }
 
@@ -129,5 +148,136 @@ class UserServiceImpl(
     override fun getBulkUserData(userIds: List<Long>): List<User> {
         this.loggerFactory.info("getBulkUserData in UserService")
         return this.userRepository.findAllById(userIds)
+    }
+
+    override fun searchUserByAnyParameter(searchUserDTO: SearchUserDTO): List<User> {
+        this.loggerFactory.info("searchUserByAnyParameter in UserServiceImpl")
+        val listOfUsers = this.userRepository.searchUsersByAllParams(searchUserDTO.searchUserString);
+        listOfUsers.forEach { it.password = null; it.roles = mutableListOf() }
+        return listOfUsers
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun sendFriendRequest(friendRequestDTO: FriendRequestDTO, request: HttpServletRequest) {
+        this.loggerFactory.info("sendFriendRequest in UserServiceImpl")
+        val jwtDecodedData = this.jwtUtil.getDecodedToken(request)
+        if (jwtDecodedData != null) {
+            if (jwtDecodedData.subject != friendRequestDTO.fromUsername) {
+                throw ResourceAccessForbidden("Cannot send request on behalf of another user")
+            }
+        } else {
+            throw ResourceAccessForbidden("Authorization Header must be present!")
+        }
+        val optionalFriend =
+            this.friendsRepository.findByFromUsernameAndToUsername(
+                friendRequestDTO.fromUsername,
+                friendRequestDTO.toUsername
+            )
+        if (!optionalFriend.isPresent) {
+            this.friendsRepository.save(
+                Friends(
+                    friendShipStatus = RequestStatusType.FRIEND_REQUEST_SENT,
+                    fromUsername = friendRequestDTO.fromUsername,
+                    toUsername = friendRequestDTO.toUsername
+                )
+            )
+            return
+        }
+
+        throw RuntimeException("Cannot send request to ${friendRequestDTO.toUsername}. Unexpected error Occurred.")
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun acceptOrDenyFriendRequest(
+        friendRequestDTO: FriendRequestDTO,
+        request: HttpServletRequest,
+        status: RequestStatusType
+    ) {
+        this.loggerFactory.info("deleteSentRequest in UserServiceImpl")
+        val jwtDecodedData = this.jwtUtil.getDecodedToken(request)
+        if (jwtDecodedData != null) {
+            if (jwtDecodedData.subject != friendRequestDTO.fromUsername) {
+                throw ResourceAccessForbidden("Cannot send request on behalf of another user")
+            }
+        } else {
+            throw ResourceAccessForbidden("Authorization Token must be valid")
+        }
+        val optionalFriend = this.friendsRepository.findByFromUsernameAndToUsername(
+            friendRequestDTO.toUsername,
+            friendRequestDTO.fromUsername
+        )
+        if (optionalFriend.isPresent) {
+            this.friendsRepository.save(
+                optionalFriend.get().apply { friendShipStatus = RequestStatusType.FRIEND_REQUEST_ACCEPTED })
+            return
+        }
+        throw RuntimeException("Cannot accept request")
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getAllFriends(username: String, request: HttpServletRequest): List<User> {
+        this.loggerFactory.info("getAllFriends in UserServiceImpl")
+        val jwtDecodedData = this.jwtUtil.getDecodedToken(request)
+        if (jwtDecodedData != null) {
+            if (jwtDecodedData.subject != username) {
+                throw ResourceAccessForbidden("Un-Authorized")
+            }
+        } else {
+            throw ResourceAccessForbidden("Authorization Token must be valid")
+        }
+        val mutableList = this.friendsRepository.findAllByFromUsernameAndFriendShipStatus(
+            username,
+            RequestStatusType.FRIEND_REQUEST_ACCEPTED
+        ).map { this.userRepository.getByUsername(it.toUsername!!) } as MutableList
+        val secondSide = this.friendsRepository.findAllByToUsernameAndFriendShipStatus(
+            username,
+            RequestStatusType.FRIEND_REQUEST_ACCEPTED
+        ).map { this.userRepository.getByUsername(it.fromUsername!!) }
+        mutableList.addAll(secondSide)
+        return mutableList
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getAllSentRequest(username: String, request: HttpServletRequest): List<User> {
+        this.loggerFactory.info("getAllSentRequest in UserServiceImpl")
+        val jwtDecodedData = this.jwtUtil.getDecodedToken(request)
+        if (jwtDecodedData != null) {
+            if (jwtDecodedData.subject != username) {
+                throw ResourceAccessForbidden("Un-Authorized")
+            }
+        } else {
+            throw ResourceAccessForbidden("Authorization Token must be valid")
+        }
+
+        TODO()
+    }
+
+    override fun getUserDetails(username: String): User {
+        return this.userRepository.getByUsername(username).apply { password = null }
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun getRequestStatus(username: String, request: HttpServletRequest): Friends {
+        this.loggerFactory.info("getRequestStatus in UserServiceImpl")
+        val jwtDecodedData = this.jwtUtil.getDecodedToken(request)
+        if (jwtDecodedData != null) {
+            val friend = this.friendsRepository.findByFromUsernameAndToUsername(jwtDecodedData.subject, username)
+            return if (!friend.isPresent) {
+                this.friendsRepository.findByFromUsernameAndToUsername(username, jwtDecodedData.subject).get()
+            } else {
+                friend.get()
+            }
+        } else {
+            throw ResourceAccessForbidden("Authorization Token must be valid")
+        }
+    }
+
+    @Throws(EntityNotFoundException::class)
+    override fun uploadProfileImage(uploadImageDTO: UploadImageDTO): Any {
+        this.loggerFactory.info("getAllFriends in UserServiceImpl")
+        val user = this.userRepository.getByUsername(uploadImageDTO.username)
+        user.imagePath = uploadImageDTO.imageUrl
+        user.imageFileName = uploadImageDTO.imagePathName
+        return this.userRepository.save(user).apply { password = null }
     }
 }

@@ -17,5 +17,6 @@ class SuccessResponseDTO(
             ResponseEntity.status(httpStatus).body(SuccessResponseDTO(payload, httpStatus))
 
         fun getDeleteResponse(): ResponseEntity<Any> = ResponseEntity.noContent().build()
+        fun getSuccessResponse(): ResponseEntity<Any> = ResponseEntity.noContent().build()
     }
 }

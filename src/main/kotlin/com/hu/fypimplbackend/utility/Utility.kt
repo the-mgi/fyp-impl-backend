@@ -1,6 +1,7 @@
 package com.hu.fypimplbackend.utility
 
 const val USER_ROUTE = "/user"
+const val INTEREST_ROUTE = "/interest"
 
 val OPEN_ROUTES = arrayOf(
     "$USER_ROUTE/login",

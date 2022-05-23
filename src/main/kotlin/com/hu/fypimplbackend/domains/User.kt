@@ -1,11 +1,13 @@
 package com.hu.fypimplbackend.domains
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.hu.fypimplbackend.enums.Gender
 import javax.persistence.*
 import javax.validation.constraints.Pattern
 
 @Entity
 @Table(name = "sys_user")
+@JsonInclude(JsonInclude.Include.ALWAYS)
 class User(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,11 +50,30 @@ class User(
     var roles: MutableList<Role> = mutableListOf(),
 
     var imagePath: String? = null,
+    var profileStatus: String? = null,
     var imageFileName: String? = null,
-    var otpCode: String? = null
+    var otpCode: String? = null,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    var interests: MutableList<Interest> = mutableListOf(),
 
 ) : BaseEntity() {
     override fun toString(): String {
-        return "User(id=$id, firstName=$firstName, lastName=$lastName, password=$password, username=$username, emailAddress=$emailAddress, phoneNumber=$phoneNumber, address=$address, gender=$gender, roles=$roles, imagePath=$imagePath, imageFileName=$imageFileName, otpCode=$otpCode)"
+        return "User(" +
+                "id=$id," +
+                " firstName=$firstName," +
+                " lastName=$lastName," +
+                " password=$password," +
+                " username=$username," +
+                " emailAddress=$emailAddress," +
+                " phoneNumber=$phoneNumber," +
+                " address=$address," +
+                " gender=$gender," +
+                " roles=$roles," +
+                " imagePath=$imagePath," +
+                " imageFileName=$imageFileName," +
+                " profileStatus=$profileStatus," +
+                " otpCode=$otpCode," +
+                " interests=$interests)"
     }
 }
